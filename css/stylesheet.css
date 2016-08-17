@@ -1,0 +1,49 @@
+h1, figure, ul, li {
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.ta {
+  position: relative;
+}
+
+.group:after {
+  content: "";
+  clear: both;
+  display: both;
+}
+
+.ta ul {
+  margin: auto;
+  list-style: none;
+  width: 260px;
+  height: 260px;
+  border: 1px solid limegreen;
+}
+
+.ta li {
+  float: left;
+  width: 50px;
+  height: 50px;
+  border: 1px solid limegreen;
+  background-color: lightgreen;
+}
+
+.ta li:hover {
+  opacity: 0.6;
+  transition: 1s;
+  border: 1px solid darkgreen;
+}
+
+.ta .current-piece {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border: 2px solid lightgray;
+  margin-left: 275px;
+}
