@@ -12,7 +12,7 @@ class View {
         this.makeMove($(event.currentTarget));
         // console.log($(event.currentTarget).attr("data-number"));
       }
-      // console.log($(event.currentTarget).html());
+      console.log($(event.currentTarget).html());
     });
   }
 
@@ -25,10 +25,10 @@ class View {
     const grid = $("<ul>").addClass("grid").addClass("group");
 
     for(let i = 0; i < 25; i++) {
-      let cell = $("<li>").addClass("cell");
-      cell.attr("data-number", i);
-      cell.html(i);
-      grid.append(cell);
+      let $cell = $("<li>").addClass("cell");
+      $cell.attr("data-number", i);
+      // cell.html(i);
+      grid.append($cell);
     }
 
     this.$el.append(grid); //set up the grid for the pieces to be places
