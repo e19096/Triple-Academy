@@ -41,4 +41,13 @@ level(a bigger version?) and the others disappear.
 - [ ] set up user interactions with game
 - [ ] polish up css
 - [ ] add movement to adjacent pieces on hover
-- [ ] add bears 
+- [ ] add bears
+
+
+view.js
+-for setting up/rendering grid
+game.js
+-game logic
+board.js
+play.js
+-start game?

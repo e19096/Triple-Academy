@@ -7,4 +7,5 @@ $( () => {
   const view = new View(game, rootEl);
   view.setupBoard();
   view.bindEvents();
+  game.giveCurrentPiece();
 });

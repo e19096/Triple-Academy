@@ -1,3 +1,5 @@
+const ImgConstants = require('./img_constants');
+
 class View {
   constructor(game, $el) {
     this.game = game;
@@ -7,18 +9,16 @@ class View {
   bindEvents() { //when cell is clicked, check if empty, then send cell to make move
     $(".cell").on("click", (event) => {
       if($(event.currentTarget).html() === "") {
-        // console.log($(event.currentTarget).data("number"));
         this.makeMove($(event.currentTarget));
+        // console.log($(event.currentTarget).attr("data-number"));
       }
       // console.log($(event.currentTarget).html());
     });
   }
 
   makeMove($cell) {
-    //put the value in the current piece div into this cell
-    let current = $(".current-piece").data("piece");
-    $cell.html(current);
-    // $cell.html("idk");
+    //call game's play move?
+    this.game.playMove($cell);
   }
 
   setupBoard() {
@@ -26,16 +26,30 @@ class View {
 
     for(let i = 0; i < 25; i++) {
       let cell = $("<li>").addClass("cell");
-      cell.data("number", i);
-      // cell.html(i);
+      cell.attr("data-number", i);
+      cell.html(i);
       grid.append(cell);
     }
 
     this.$el.append(grid); //set up the grid for the pieces to be places
 
-    this.$el.append($("<div>").addClass("current-piece"));//make a separate place to hold to current piece to be placed
+    //make a separate place to hold to current piece to be placed
+    this.$el.append($("<div>").addClass("current-piece"));
 
-    //place random pieces on board
+    //place random pieces (from: grass, bush, tree, hut) in random cells
+    //- some number of pieces between 5-7
+    let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
+
+    for(let i = 0; i < numPieces; i++) {
+      let randomCellNo = Math.floor(Math.random() * 25);
+      // make sure cell is empty else do it again
+      while($(`.cell[data-number=${randomCellNo}]`).html()) {
+        randomCellNo = Math.floor(Math.random() * 25);
+      }
+
+      let randomPiece = `${ImgConstants[Math.floor(Math.random() * (18 - 1) + 1)]}`;
+      $(`.cell[data-number=${randomCellNo}]`).html(randomPiece);
+    }
   }
 }
 

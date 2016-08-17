@@ -53,12 +53,15 @@
 	  const view = new View(game, rootEl);
 	  view.setupBoard();
 	  view.bindEvents();
+	  game.giveCurrentPiece();
 	});
 
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
+
+	const ImgConstants = __webpack_require__(3);
 
 	class View {
 	  constructor(game, $el) {
@@ -69,18 +72,16 @@
 	  bindEvents() { //when cell is clicked, check if empty, then send cell to make move
 	    $(".cell").on("click", (event) => {
 	      if($(event.currentTarget).html() === "") {
-	        // console.log($(event.currentTarget).data("number"));
 	        this.makeMove($(event.currentTarget));
+	        // console.log($(event.currentTarget).attr("data-number"));
 	      }
 	      // console.log($(event.currentTarget).html());
 	    });
 	  }
 
 	  makeMove($cell) {
-	    //put the value in the current piece div into this cell
-	    let current = $(".current-piece").data("piece");
-	    $cell.html(current);
-	    // $cell.html("idk");
+	    //call game's play move?
+	    this.game.playMove($cell);
 	  }
 
 	  setupBoard() {
@@ -88,16 +89,30 @@
 
 	    for(let i = 0; i < 25; i++) {
 	      let cell = $("<li>").addClass("cell");
-	      cell.data("number", i);
-	      // cell.html(i);
+	      cell.attr("data-number", i);
+	      cell.html(i);
 	      grid.append(cell);
 	    }
 
 	    this.$el.append(grid); //set up the grid for the pieces to be places
 
-	    this.$el.append($("<div>").addClass("current-piece"));//make a separate place to hold to current piece to be placed
+	    //make a separate place to hold to current piece to be placed
+	    this.$el.append($("<div>").addClass("current-piece"));
 
-	    //place random pieces on board
+	    //place random pieces (from: grass, bush, tree, hut) in random cells
+	    //- some number of pieces between 5-7
+	    let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
+
+	    for(let i = 0; i < numPieces; i++) {
+	      let randomCellNo = Math.floor(Math.random() * 25);
+	      // make sure cell is empty else do it again
+	      while($(`.cell[data-number=${randomCellNo}]`).html()) {
+	        randomCellNo = Math.floor(Math.random() * 25);
+	      }
+
+	      let randomPiece = `${ImgConstants[Math.floor(Math.random() * (18 - 1) + 1)]}`;
+	      $(`.cell[data-number=${randomCellNo}]`).html(randomPiece);
+	    }
 	  }
 	}
 
@@ -106,13 +121,72 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
+
+	const ImgConstants = __webpack_require__(3);
 
 	class Game {
+	  constructor() {
+	    // this.giveCurrentPiece();
+	  }
 
+	  playMove($cell) {
+	    let currentPiece = $(".current-piece").html();
+	    $cell.html(currentPiece);
+	    this.giveCurrentPiece();
+	  }
+
+	  needToCombine() {
+
+	  }
+
+	  combine() {
+
+	  }
+
+	  giveCurrentPiece() {
+	    //pick random piece (from: grass, bush, tree)
+	    $(".current-piece").html(`${ImgConstants[Math.floor(Math.random() * (17 - 1) + 1)]}`);
+	  }
 	}
 
 	module.exports = Game;
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	ImgConstants = {
+	  1: '<img src="./images/grass.png" >',
+	  2: '<img src="./images/grass.png" >',
+	  3: '<img src="./images/grass.png" >',
+	  4: '<img src="./images/grass.png" >',
+	  5: '<img src="./images/grass.png" >',
+	  6: '<img src="./images/grass.png" >',
+	  7: '<img src="./images/grass.png" >',
+	  8: '<img src="./images/grass.png" >',
+
+	  9: '<img src="./images/bush.png" >',
+	  10: '<img src="./images/bush.png" >',
+	  11: '<img src="./images/bush.png" >',
+	  12: '<img src="./images/bush.png" >',
+	  13: '<img src="./images/bush.png" >',
+
+	  14: '<img src="./images/tree.png" >',
+	  15: '<img src="./images/tree.png" >',
+	  16: '<img src="./images/tree.png" >',
+
+	  17: '<img src="./images/hut.png" >',
+
+	  18: '<img src="./images/house.png" >',
+
+	  19: '<img src="./images/mansion.png" >',
+
+	  20: '<img src="./images/castle.png" >'
+	};
+
+	module.exports = ImgConstants;
 
 
 /***/ }
