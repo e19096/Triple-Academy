@@ -1,16 +1,14 @@
 
-class Board {
-  constructor() {
+const Board = function () {
 
-  }
+};
 
-  isWon() {
+Board.prototype.isWon = function () {
 
-  }
+};
 
-  isFull() {
+Board.prototype.isFull = function () {
 
-  }
-}
+};
 
 module.exports = Board;

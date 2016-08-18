@@ -63,67 +63,65 @@
 
 	const ImgConstants = __webpack_require__(3);
 
-	class View {
-	  constructor(game, $el) {
-	    this.game = game;
-	    this.$el = $el;
-	  }
+	const View = function (game, $el) {
+	  this.game = game;
+	  this.$el = $el;
+	};
 
-	  bindEvents() { //when cell is clicked, check if empty, then send cell to make move
-	    $(".cell").on("click", (event) => {
-	      if($(event.currentTarget).html() === "") {
-	        this.makeMove($(event.currentTarget));
-	        // console.log($(event.currentTarget).attr("data-number"));
-	      }
+	View.prototype.bindEvents = function () { //when cell is clicked, check if empty, then send cell to make move
+	  $(".cell").on("click", (event) => {
+	    if($(event.currentTarget).html() === "") {
+	      this.makeMove($(event.currentTarget));
 	      // console.log($(event.currentTarget).attr("data-number"));
-	    });
+	    }
+	    // console.log($(event.currentTarget).attr("data-number"));
+	  });
+	};
+
+	View.prototype.makeMove = function ($cell) {
+	  //call game's play move?
+	  this.game.playMove($cell);
+	};
+
+	View.prototype.setupBoard = function () {
+	  const grid = $("<ul>").addClass("grid").addClass("group");
+
+	  for(let i = 0; i < 25; i++) {
+	    let $cell = $("<li>").addClass("cell");
+	    $cell.attr("data-number", i);
+	    // cell.html(i);
+	    grid.append($cell);
 	  }
 
-	  makeMove($cell) {
-	    //call game's play move?
-	    this.game.playMove($cell);
-	  }
+	  this.$el.append(grid); //set up the grid for the pieces to be places
 
-	  setupBoard() {
-	    const grid = $("<ul>").addClass("grid").addClass("group");
+	  //make a separate place to hold to current piece to be placed
+	  this.$el.append($("<div>").addClass("current-piece"));
 
-	    for(let i = 0; i < 25; i++) {
-	      let $cell = $("<li>").addClass("cell");
-	      $cell.attr("data-number", i);
-	      // cell.html(i);
-	      grid.append($cell);
+	  //place random pieces (from: grass, bush, tree, hut) in random cells
+	  //- some number of pieces between 5-7
+	  let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
+
+	  for(let i = 0; i < numPieces; i++) {
+	    let randomPiece = `${ImgConstants[Math.floor(Math.random() * (18 - 1) + 1)]}`;
+	    let randomCellNo = Math.floor(Math.random() * 25);
+
+	    // make sure cell is empty else do it again
+	    // and also make sure this piece is not adjacent to 2+ of the same piece
+	    while(($(`.cell[data-number=${randomCellNo}]`).html())) {
+	      console.log("oops! there's already something there!");
+	      randomCellNo = Math.floor(Math.random() * 25);
 	    }
 
-	    this.$el.append(grid); //set up the grid for the pieces to be places
-
-	    //make a separate place to hold to current piece to be placed
-	    this.$el.append($("<div>").addClass("current-piece"));
-
-	    //place random pieces (from: grass, bush, tree, hut) in random cells
-	    //- some number of pieces between 5-7
-	    let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
-
-	    for(let i = 0; i < numPieces; i++) {
-	      let randomPiece = `${ImgConstants[Math.floor(Math.random() * (18 - 1) + 1)]}`;
-	      let randomCellNo = Math.floor(Math.random() * 25);
-
-	      // make sure cell is empty else do it again
-	      // and also make sure this piece is not adjacent to 2+ of the same piece
-	      while(($(`.cell[data-number=${randomCellNo}]`).html())) {
-	        console.log("oops! there's already something there!");
-	        randomCellNo = Math.floor(Math.random() * 25);
-	      }
-
-	      while((this.game.adjacentSamePieces($(`.cell[data-number=${randomCellNo}]`).html(randomPiece))).length >= 2) {
-	        console.log("oops! pick a different cell! (would need to combine)");
-	        $(`.cell[data-number=${randomCellNo}]`).html("");
-	        randomCellNo = Math.floor(Math.random() * 25);
-	      }
-	      
-	      $(`.cell[data-number=${randomCellNo}]`).html(randomPiece);
+	    while((this.game.adjacentSamePieces($(`.cell[data-number=${randomCellNo}]`).html(randomPiece))).length >= 2) {
+	      console.log("oops! pick a different cell! (would need to combine)");
+	      $(`.cell[data-number=${randomCellNo}]`).html("");
+	      randomCellNo = Math.floor(Math.random() * 25);
 	    }
+
+	    $(`.cell[data-number=${randomCellNo}]`).html(randomPiece);
 	  }
-	}
+	};
 
 	module.exports = View;
 
@@ -135,107 +133,105 @@
 	const ImgConstants = __webpack_require__(3);
 	const ImgValueConstants = __webpack_require__(4);
 
-	class Game {
-	  constructor() {
-	    // this.giveCurrentPiece();
-	  }
+	function Game() {
 
-	  playMove($cell) {
-	    let currentPiece = $(".current-piece").html();
-	    $cell.html(currentPiece);
-
-	    let adjacentCells = this.adjacentSamePieces($cell);
-	    while(adjacentCells.length >= 2) {
-	      console.log("time to combine!");
-	      let newPiece = this.combine($cell); //combine them
-
-	      adjacentCells.forEach(function (cell) { //clear adjacent cells
-	        cell.html("");
-	      });
-
-	      $cell.html(newPiece); //render the new piece
-	      adjacentCells = this.adjacentSamePieces($cell); //check that that doesn't need to be combined
-	    }
-	    // this.adjacentSamePieces($cell);
-	    this.giveCurrentPiece();
-	  }
-
-	  adjacentSamePieces($cell) {
-	    let currentCellNo = $cell.attr("data-number");
-	    //for initial board setup
-	    if($cell.html() === "") {
-	      return [];
-	    }
-
-	    let adjacents = []; //to keep track of adjacent same objects
-	    //check all adjacent cells to check if same piece
-	    let topCellNo = parseInt(currentCellNo) - 5;
-	    let bottomCellNo = parseInt(currentCellNo) + 5;
-	    let leftCellNo = parseInt(currentCellNo) - 1;
-	    let rightCellNo = parseInt(currentCellNo) + 1;
-
-	    if((currentCellNo > 4) && $(`.cell[data-number=${topCellNo}]`).html() === $cell.html()) { //top
-	      adjacents.push($(`.cell[data-number=${topCellNo}]`)); //= this.adjacentSamePieces($(`.cell[data-number=${currentCellNo - 5}]`), adjacentCount + 1);
-	      if(((topCellNo) > 4) && $(`.cell[data-number=${topCellNo - 5}]`).html() === $cell.html()) { //top
-	        adjacents.push($(`.cell[data-number=${topCellNo - 5}]`));
-	      }
-	      if(((topCellNo) % 5 !== 0) && $(`.cell[data-number=${topCellNo - 1}]`).html() === $cell.html()) { //left
-	        adjacents.push($(`.cell[data-number=${topCellNo - 1}]`));
-	      }
-	      if(((topCellNo) % 5 !== 4) && $(`.cell[data-number=${topCellNo + 1}]`).html() === $cell.html()) { //right
-	        adjacents.push($(`.cell[data-number=${topCellNo + 1}]`));
-	      }
-	    }
-	    if((currentCellNo < 20) && $(`.cell[data-number=${bottomCellNo}]`).html() === $cell.html()) { //bottom
-	      adjacents.push($(`.cell[data-number=${bottomCellNo}]`)); //= this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) + 5}]`), adjacentCount + 1);
-	      if((bottomCellNo < 20) && $(`.cell[data-number=${bottomCellNo + 5}]`).html() === $cell.html()) { //bottom
-	        adjacents.push($(`.cell[data-number=${bottomCellNo + 5}]`));
-	      }
-	      if((bottomCellNo % 5 !== 0) && $(`.cell[data-number=${bottomCellNo - 1}]`).html() === $cell.html()) { //left
-	        adjacents.push($(`.cell[data-number=${bottomCellNo - 1}]`));
-	      }
-	      if((bottomCellNo % 5 !== 4) && $(`.cell[data-number=${bottomCellNo + 1}]`).html() === $cell.html()) { //right
-	        adjacents.push($(`.cell[data-number=${bottomCellNo + 1}]`));
-	      }
-	    }
-	    if((currentCellNo % 5 !== 0) && $(`.cell[data-number=${leftCellNo}]`).html() === $cell.html()) { //left
-	      adjacents.push($(`.cell[data-number=${leftCellNo}]`)); // = this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) - 1}]`), adjacentCount + 1);
-	      if((leftCellNo > 4) && $(`.cell[data-number=${leftCellNo - 5}]`).html() === $cell.html()) { //top
-	        adjacents.push($(`.cell[data-number=${leftCellNo - 5}]`));
-	      }
-	      if((leftCellNo < 20) && $(`.cell[data-number=${leftCellNo + 5}]`).html() === $cell.html()) { //bottom
-	        adjacents.push($(`.cell[data-number=${leftCellNo + 5}]`));
-	      }
-	      if((leftCellNo % 5 !== 0) && $(`.cell[data-number=${leftCellNo - 1}]`).html() === $cell.html()) { //left
-	        adjacents.push($(`.cell[data-number=${leftCellNo - 1}]`));
-	      }
-	    }
-	    if((currentCellNo % 5 !== 4) && $(`.cell[data-number=${rightCellNo}]`).html() === $cell.html()) { //right
-	      adjacents.push($(`.cell[data-number=${rightCellNo}]`)); // = this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) + 1}]`), adjacentCount + 1);
-	      if((rightCellNo > 4) && $(`.cell[data-number=${rightCellNo - 5}]`).html() === $cell.html()) { //top
-	        adjacents.push($(`.cell[data-number=${rightCellNo - 5}]`));
-	      }
-	      if((rightCellNo < 20) && $(`.cell[data-number=${rightCellNo + 5}]`).html() === $cell.html()) { //bottom
-	        adjacents.push($(`.cell[data-number=${rightCellNo + 5}]`));
-	      }
-	      if((rightCellNo % 5 !== 4) && $(`.cell[data-number=${rightCellNo + 1}]`).html() === $cell.html()) { //right
-	        adjacents.push($(`.cell[data-number=${rightCellNo + 1}]`));
-	      }
-	    }
-
-	    return adjacents;
-	  }
-
-	  combine(currentCell) {
-	    let object = currentCell.html().slice(19, -6);
-	    return ImgValueConstants[ImgValueConstants[object]+1];
-	  }
-
-	  giveCurrentPiece() {
-	    //pick random piece (from: grass, bush, tree)
-	    $(".current-piece").html(`${ImgConstants[Math.floor(Math.random() * (17 - 1) + 1)]}`);
-	  }
 	}
+
+	Game.prototype.playMove = function ($cell) {
+	  let currentPiece = $(".current-piece").html();
+	  $cell.html(currentPiece);
+
+	  let adjacentCells = this.adjacentSamePieces($cell);
+	  while(adjacentCells.length >= 2) {
+	    console.log("time to combine!");
+	    let newPiece = this.combine($cell); //combine them
+
+	    adjacentCells.forEach(function (cell) { //clear adjacent cells
+	      cell.html("");
+	    });
+
+	    $cell.html(newPiece); //render the new piece
+	    adjacentCells = this.adjacentSamePieces($cell); //check that that doesn't need to be combined
+	  }
+	  // this.adjacentSamePieces($cell);
+	  this.giveCurrentPiece();
+	};
+
+	Game.prototype.adjacentSamePieces = function ($cell) {
+	  let currentCellNo = $cell.attr("data-number");
+	  //for initial board setup
+	  if($cell.html() === "") {
+	    return [];
+	  }
+
+	  let adjacents = []; //to keep track of adjacent same objects
+	  //check all adjacent cells to check if same piece
+	  let topCellNo = parseInt(currentCellNo) - 5;
+	  let bottomCellNo = parseInt(currentCellNo) + 5;
+	  let leftCellNo = parseInt(currentCellNo) - 1;
+	  let rightCellNo = parseInt(currentCellNo) + 1;
+
+	  if((currentCellNo > 4) && $(`.cell[data-number=${topCellNo}]`).html() === $cell.html()) { //top
+	    adjacents.push($(`.cell[data-number=${topCellNo}]`)); //= this.adjacentSamePieces($(`.cell[data-number=${currentCellNo - 5}]`), adjacentCount + 1);
+	    if(((topCellNo) > 4) && $(`.cell[data-number=${topCellNo - 5}]`).html() === $cell.html()) { //top
+	      adjacents.push($(`.cell[data-number=${topCellNo - 5}]`));
+	    }
+	    if(((topCellNo) % 5 !== 0) && $(`.cell[data-number=${topCellNo - 1}]`).html() === $cell.html()) { //left
+	      adjacents.push($(`.cell[data-number=${topCellNo - 1}]`));
+	    }
+	    if(((topCellNo) % 5 !== 4) && $(`.cell[data-number=${topCellNo + 1}]`).html() === $cell.html()) { //right
+	      adjacents.push($(`.cell[data-number=${topCellNo + 1}]`));
+	    }
+	  }
+	  if((currentCellNo < 20) && $(`.cell[data-number=${bottomCellNo}]`).html() === $cell.html()) { //bottom
+	    adjacents.push($(`.cell[data-number=${bottomCellNo}]`)); //= this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) + 5}]`), adjacentCount + 1);
+	    if((bottomCellNo < 20) && $(`.cell[data-number=${bottomCellNo + 5}]`).html() === $cell.html()) { //bottom
+	      adjacents.push($(`.cell[data-number=${bottomCellNo + 5}]`));
+	    }
+	    if((bottomCellNo % 5 !== 0) && $(`.cell[data-number=${bottomCellNo - 1}]`).html() === $cell.html()) { //left
+	      adjacents.push($(`.cell[data-number=${bottomCellNo - 1}]`));
+	    }
+	    if((bottomCellNo % 5 !== 4) && $(`.cell[data-number=${bottomCellNo + 1}]`).html() === $cell.html()) { //right
+	      adjacents.push($(`.cell[data-number=${bottomCellNo + 1}]`));
+	    }
+	  }
+	  if((currentCellNo % 5 !== 0) && $(`.cell[data-number=${leftCellNo}]`).html() === $cell.html()) { //left
+	    adjacents.push($(`.cell[data-number=${leftCellNo}]`)); // = this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) - 1}]`), adjacentCount + 1);
+	    if((leftCellNo > 4) && $(`.cell[data-number=${leftCellNo - 5}]`).html() === $cell.html()) { //top
+	      adjacents.push($(`.cell[data-number=${leftCellNo - 5}]`));
+	    }
+	    if((leftCellNo < 20) && $(`.cell[data-number=${leftCellNo + 5}]`).html() === $cell.html()) { //bottom
+	      adjacents.push($(`.cell[data-number=${leftCellNo + 5}]`));
+	    }
+	    if((leftCellNo % 5 !== 0) && $(`.cell[data-number=${leftCellNo - 1}]`).html() === $cell.html()) { //left
+	      adjacents.push($(`.cell[data-number=${leftCellNo - 1}]`));
+	    }
+	  }
+	  if((currentCellNo % 5 !== 4) && $(`.cell[data-number=${rightCellNo}]`).html() === $cell.html()) { //right
+	    adjacents.push($(`.cell[data-number=${rightCellNo}]`)); // = this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) + 1}]`), adjacentCount + 1);
+	    if((rightCellNo > 4) && $(`.cell[data-number=${rightCellNo - 5}]`).html() === $cell.html()) { //top
+	      adjacents.push($(`.cell[data-number=${rightCellNo - 5}]`));
+	    }
+	    if((rightCellNo < 20) && $(`.cell[data-number=${rightCellNo + 5}]`).html() === $cell.html()) { //bottom
+	      adjacents.push($(`.cell[data-number=${rightCellNo + 5}]`));
+	    }
+	    if((rightCellNo % 5 !== 4) && $(`.cell[data-number=${rightCellNo + 1}]`).html() === $cell.html()) { //right
+	      adjacents.push($(`.cell[data-number=${rightCellNo + 1}]`));
+	    }
+	  }
+
+	  return adjacents;
+	};
+
+	Game.prototype.combine = function (currentCell) {
+	  let object = currentCell.html().slice(19, -6);
+	  return ImgValueConstants[ImgValueConstants[object]+1];
+	};
+
+	Game.prototype.giveCurrentPiece = function () {
+	  //pick random piece (from: grass, bush, tree)
+	  $(".current-piece").html(`${ImgConstants[Math.floor(Math.random() * (17 - 1) + 1)]}`);
+	};
 
 	module.exports = Game;
 
