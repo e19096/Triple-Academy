@@ -12,7 +12,7 @@ class View {
         this.makeMove($(event.currentTarget));
         // console.log($(event.currentTarget).attr("data-number"));
       }
-      console.log($(event.currentTarget).attr("data-number"));
+      // console.log($(event.currentTarget).attr("data-number"));
     });
   }
 
@@ -41,13 +41,22 @@ class View {
     let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 
     for(let i = 0; i < numPieces; i++) {
+      let randomPiece = `${ImgConstants[Math.floor(Math.random() * (18 - 1) + 1)]}`;
       let randomCellNo = Math.floor(Math.random() * 25);
+
       // make sure cell is empty else do it again
-      while($(`.cell[data-number=${randomCellNo}]`).html()) {
+      // and also make sure this piece is not adjacent to 2+ of the same piece
+      while(($(`.cell[data-number=${randomCellNo}]`).html())) {
+        console.log("oops! there's already something there!");
         randomCellNo = Math.floor(Math.random() * 25);
       }
 
-      let randomPiece = `${ImgConstants[Math.floor(Math.random() * (18 - 1) + 1)]}`;
+      while((this.game.adjacentSamePieces($(`.cell[data-number=${randomCellNo}]`).html(randomPiece))).length >= 2) {
+        console.log("oops! pick a different cell! (would need to combine)");
+        $(`.cell[data-number=${randomCellNo}]`).html("");
+        randomCellNo = Math.floor(Math.random() * 25);
+      }
+      
       $(`.cell[data-number=${randomCellNo}]`).html(randomPiece);
     }
   }

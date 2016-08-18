@@ -75,7 +75,7 @@
 	        this.makeMove($(event.currentTarget));
 	        // console.log($(event.currentTarget).attr("data-number"));
 	      }
-	      console.log($(event.currentTarget).attr("data-number"));
+	      // console.log($(event.currentTarget).attr("data-number"));
 	    });
 	  }
 
@@ -104,13 +104,22 @@
 	    let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 
 	    for(let i = 0; i < numPieces; i++) {
+	      let randomPiece = `${ImgConstants[Math.floor(Math.random() * (18 - 1) + 1)]}`;
 	      let randomCellNo = Math.floor(Math.random() * 25);
+
 	      // make sure cell is empty else do it again
-	      while($(`.cell[data-number=${randomCellNo}]`).html()) {
+	      // and also make sure this piece is not adjacent to 2+ of the same piece
+	      while(($(`.cell[data-number=${randomCellNo}]`).html())) {
+	        console.log("oops! there's already something there!");
 	        randomCellNo = Math.floor(Math.random() * 25);
 	      }
 
-	      let randomPiece = `${ImgConstants[Math.floor(Math.random() * (18 - 1) + 1)]}`;
+	      while((this.game.adjacentSamePieces($(`.cell[data-number=${randomCellNo}]`).html(randomPiece))).length >= 2) {
+	        console.log("oops! pick a different cell! (would need to combine)");
+	        $(`.cell[data-number=${randomCellNo}]`).html("");
+	        randomCellNo = Math.floor(Math.random() * 25);
+	      }
+	      
 	      $(`.cell[data-number=${randomCellNo}]`).html(randomPiece);
 	    }
 	  }
@@ -124,6 +133,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	const ImgConstants = __webpack_require__(3);
+	const ImgValueConstants = __webpack_require__(4);
 
 	class Game {
 	  constructor() {
@@ -133,40 +143,92 @@
 	  playMove($cell) {
 	    let currentPiece = $(".current-piece").html();
 	    $cell.html(currentPiece);
-	    this.adjacentSamePieces($cell);
+
+	    let adjacentCells = this.adjacentSamePieces($cell);
+	    if(adjacentCells.length >= 2) {
+	      console.log("time to combine!");
+	      let newPiece = this.combine($cell); //combine them
+	      adjacentCells.forEach(function (cell) {
+	        cell.html("");
+	      });//clear adjacent cells
+	      $cell.html(newPiece);
+	    }
+	    // this.adjacentSamePieces($cell);
 	    this.giveCurrentPiece();
 	  }
 
 	  adjacentSamePieces($cell) {
 	    let currentCellNo = $cell.attr("data-number");
-	    // console.log(currentCellNo);
-	    // console.log($(`.cell[data-number=${currentCellNo - 5}]`).html());
-	    // console.log($(`.cell[data-number=${parseInt(currentCellNo) + 5}]`).html());
-	    // console.log($(`.cell[data-number=${currentCellNo - 1}]`).html());
-	    // console.log($(`.cell[data-number=${parseInt(currentCellNo) + 1}]`).html());
+	    //for initial board setup
+	    if($cell.html() === "") {
+	      return [];
+	    }
 
-	    let adjacentCount = 0; //to keep track of adjacent same objects
+	    let adjacents = []; //to keep track of adjacent same objects
 	    //check all adjacent cells to check if same piece
 	    if((currentCellNo > 4) && $(`.cell[data-number=${parseInt(currentCellNo) - 5}]`).html() === $cell.html()) { //top
-	      adjacentCount++;
-	      console.log("top!");
+	      adjacents.push($(`.cell[data-number=${parseInt(currentCellNo) - 5}]`)); //= this.adjacentSamePieces($(`.cell[data-number=${currentCellNo - 5}]`), adjacentCount + 1);
+	      // console.log("top!");
+	      if(((currentCellNo-5) > 4) && $(`.cell[data-number=${parseInt(currentCellNo)-5 - 5}]`).html() === $cell.html()) { //top
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-5 - 5}]`));
+	      }
+	      if(((currentCellNo-5) % 5 !== 0) && $(`.cell[data-number=${parseInt(currentCellNo)-5 - 1}]`).html() === $cell.html()) { //left
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-5 - 1}]`));
+	      }
+	      if(((currentCellNo-5) % 5 !== 4) && $(`.cell[data-number=${parseInt(currentCellNo)-5 + 1}]`).html() === $cell.html()) { //right
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-5 + 1}]`));
+	      }
 	    }
 	    if((currentCellNo < 20) && $(`.cell[data-number=${parseInt(currentCellNo) + 5}]`).html() === $cell.html()) { //bottom
-	      adjacentCount++;
-	      console.log("bottom!");
+	      // console.log("bottom!");
+	      adjacents.push($(`.cell[data-number=${parseInt(currentCellNo) + 5}]`)); //= this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) + 5}]`), adjacentCount + 1);
+	      if(((parseInt(currentCellNo)+5) < 20) && $(`.cell[data-number=${parseInt(currentCellNo)+5 + 5}]`).html() === $cell.html()) { //bottom
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+5 + 5}]`));
+	      }
+	      if(((parseInt(currentCellNo)+5) % 5 !== 0) && $(`.cell[data-number=${parseInt(currentCellNo)+5 - 1}]`).html() === $cell.html()) { //left
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+5 - 1}]`));
+	      }
+	      if(((parseInt(currentCellNo)+5) % 5 !== 4) && $(`.cell[data-number=${parseInt(currentCellNo)+5 + 1}]`).html() === $cell.html()) { //right
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+5 + 1}]`));
+	      }
 	    }
 	    if((currentCellNo % 5 !== 0) && $(`.cell[data-number=${parseInt(currentCellNo) - 1}]`).html() === $cell.html()) { //left
-	      adjacentCount++;
-	      console.log("left!");
+	      // console.log("left!");
+	      adjacents.push($(`.cell[data-number=${parseInt(currentCellNo) - 1}]`)); // = this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) - 1}]`), adjacentCount + 1);
+	      if(((currentCellNo-1) > 4) && $(`.cell[data-number=${parseInt(currentCellNo)-1 - 5}]`).html() === $cell.html()) { //top
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-1 - 5}]`));
+	      }
+	      if(((currentCellNo-1) < 20) && $(`.cell[data-number=${parseInt(currentCellNo)-1 + 5}]`).html() === $cell.html()) { //bottom
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-1 + 5}]`));
+	      }
+	      if(((currentCellNo-1) % 5 !== 0) && $(`.cell[data-number=${parseInt(currentCellNo)-1 - 1}]`).html() === $cell.html()) { //left
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-1 - 1}]`));
+	      }
 	    }
 	    if((currentCellNo % 5 !== 4) && $(`.cell[data-number=${parseInt(currentCellNo) + 1}]`).html() === $cell.html()) { //right
-	      adjacentCount++;
-	      console.log("right!");
+	      // console.log("right!");
+	      adjacents.push($(`.cell[data-number=${parseInt(currentCellNo) + 1}]`)); // = this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) + 1}]`), adjacentCount + 1);
+	      if(((parseInt(currentCellNo)+1) > 4) && $(`.cell[data-number=${parseInt(currentCellNo)+1 - 5}]`).html() === $cell.html()) { //top
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+1 - 5}]`));
+	      }
+	      if(((parseInt(currentCellNo)+1) < 20) && $(`.cell[data-number=${parseInt(currentCellNo)+1 + 5}]`).html() === $cell.html()) { //bottom
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+1 + 5}]`));
+	      }
+	      if(((parseInt(currentCellNo)+1) % 5 !== 4) && $(`.cell[data-number=${parseInt(currentCellNo)+1 + 1}]`).html() === $cell.html()) { //right
+	        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+1 + 1}]`));
+	      }
 	    }
+
+	    // console.log(`adjacentCount = ${adjacentCount}`);
+	    return adjacents;
 	  }
 
-	  combine() {
-
+	  combine(currentCell) {
+	    let object = currentCell.html().slice(19, -6);
+	    // debugger
+	    // console.log(`combining! currentPiece=${currentPiece}`);
+	    // console.log(ImgValueConstants[currentPiece]);
+	    return ImgValueConstants[ImgValueConstants[object]+1];
 	  }
 
 	  giveCurrentPiece() {
@@ -183,35 +245,68 @@
 /***/ function(module, exports) {
 
 	ImgConstants = {
-	  1: '<img src="./images/grass.png" >',
-	  2: '<img src="./images/grass.png" >',
-	  3: '<img src="./images/grass.png" >',
-	  4: '<img src="./images/grass.png" >',
-	  5: '<img src="./images/grass.png" >',
-	  6: '<img src="./images/grass.png" >',
-	  7: '<img src="./images/grass.png" >',
-	  8: '<img src="./images/grass.png" >',
+	  1: "<img src='./images/grass.png' >",
+	  2: "<img src='./images/grass.png' >",
+	  3: "<img src='./images/grass.png' >",
+	  4: "<img src='./images/grass.png' >",
+	  5: "<img src='./images/grass.png' >",
+	  6: "<img src='./images/grass.png' >",
+	  7: "<img src='./images/grass.png' >",
+	  8: "<img src='./images/grass.png' >",
 
-	  9: '<img src="./images/bush.png" >',
-	  10: '<img src="./images/bush.png" >',
-	  11: '<img src="./images/bush.png" >',
-	  12: '<img src="./images/bush.png" >',
-	  13: '<img src="./images/bush.png" >',
+	  9: "<img src='./images/bush.png' >",
+	  10: "<img src='./images/bush.png' >",
+	  11: "<img src='./images/bush.png' >",
+	  12: "<img src='./images/bush.png' >",
+	  13: "<img src='./images/bush.png' >",
 
-	  14: '<img src="./images/tree.png" >',
-	  15: '<img src="./images/tree.png" >',
-	  16: '<img src="./images/tree.png" >',
+	  14: "<img src='./images/tree.png' >",
+	  15: "<img src='./images/tree.png' >",
+	  16: "<img src='./images/tree.png' >",
 
-	  17: '<img src="./images/hut.png" >',
+	  17: "<img src='./images/hut.png' >",
 
-	  18: '<img src="./images/house.png" >',
+	  18: "<img src='./images/house.png' >",
 
-	  19: '<img src="./images/mansion.png" >',
+	  19: "<img src='./images/mansion.png' >",
 
-	  20: '<img src="./images/castle.png" >'
+	  20: "<img src='./images/castle.png' >"
 	};
 
 	module.exports = ImgConstants;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	ImgValueConstants = {
+	  // "<img src=\"./images/grass.png\" >": 0,
+	  // "<img src=\"./images/bush.png\" >": 1,
+	  // "<img src=\"./images/tree.png\" >": 2,
+	  // "<img src=\"./images/hut.png\" >": 3,
+	  // "<img src=\"./images/house.png\" >": 4,
+	  // "<img src=\"./images/mansion.png\" >": 5,
+	  // "<img src=\"./images/castle.png\" >": 6,
+
+	  "grass": 0,
+	  "bush": 1,
+	  "tree": 2,
+	  "hut": 3,
+	  "house": 4,
+	  "mansion": 5,
+	  "castle": 6,
+
+	  0 : "<img src=\"./images/grass.png\" >",
+	  1 : "<img src=\"./images/bush.png\" >",
+	  2 : "<img src=\"./images/tree.png\" >",
+	  3 : "<img src=\"./images/hut.png\" >",
+	  4 : "<img src=\"./images/house.png\" >",
+	  5 : "<img src=\"./images/mansion.png\" >",
+	  6 : "<img src=\"./images/castle.png\" >"
+	};
+
+	module.exports = ImgValueConstants;
 
 
 /***/ }

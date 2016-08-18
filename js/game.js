@@ -1,4 +1,5 @@
 const ImgConstants = require('./img_constants');
+const ImgValueConstants = require('./img_value_constants');
 
 class Game {
   constructor() {
@@ -8,40 +9,92 @@ class Game {
   playMove($cell) {
     let currentPiece = $(".current-piece").html();
     $cell.html(currentPiece);
-    this.adjacentSamePieces($cell);
+
+    let adjacentCells = this.adjacentSamePieces($cell);
+    if(adjacentCells.length >= 2) {
+      console.log("time to combine!");
+      let newPiece = this.combine($cell); //combine them
+      adjacentCells.forEach(function (cell) {
+        cell.html("");
+      });//clear adjacent cells
+      $cell.html(newPiece);
+    }
+    // this.adjacentSamePieces($cell);
     this.giveCurrentPiece();
   }
 
   adjacentSamePieces($cell) {
     let currentCellNo = $cell.attr("data-number");
-    // console.log(currentCellNo);
-    // console.log($(`.cell[data-number=${currentCellNo - 5}]`).html());
-    // console.log($(`.cell[data-number=${parseInt(currentCellNo) + 5}]`).html());
-    // console.log($(`.cell[data-number=${currentCellNo - 1}]`).html());
-    // console.log($(`.cell[data-number=${parseInt(currentCellNo) + 1}]`).html());
+    //for initial board setup
+    if($cell.html() === "") {
+      return [];
+    }
 
-    let adjacentCount = 0; //to keep track of adjacent same objects
+    let adjacents = []; //to keep track of adjacent same objects
     //check all adjacent cells to check if same piece
     if((currentCellNo > 4) && $(`.cell[data-number=${parseInt(currentCellNo) - 5}]`).html() === $cell.html()) { //top
-      adjacentCount++;
-      console.log("top!");
+      adjacents.push($(`.cell[data-number=${parseInt(currentCellNo) - 5}]`)); //= this.adjacentSamePieces($(`.cell[data-number=${currentCellNo - 5}]`), adjacentCount + 1);
+      // console.log("top!");
+      if(((currentCellNo-5) > 4) && $(`.cell[data-number=${parseInt(currentCellNo)-5 - 5}]`).html() === $cell.html()) { //top
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-5 - 5}]`));
+      }
+      if(((currentCellNo-5) % 5 !== 0) && $(`.cell[data-number=${parseInt(currentCellNo)-5 - 1}]`).html() === $cell.html()) { //left
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-5 - 1}]`));
+      }
+      if(((currentCellNo-5) % 5 !== 4) && $(`.cell[data-number=${parseInt(currentCellNo)-5 + 1}]`).html() === $cell.html()) { //right
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-5 + 1}]`));
+      }
     }
     if((currentCellNo < 20) && $(`.cell[data-number=${parseInt(currentCellNo) + 5}]`).html() === $cell.html()) { //bottom
-      adjacentCount++;
-      console.log("bottom!");
+      // console.log("bottom!");
+      adjacents.push($(`.cell[data-number=${parseInt(currentCellNo) + 5}]`)); //= this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) + 5}]`), adjacentCount + 1);
+      if(((parseInt(currentCellNo)+5) < 20) && $(`.cell[data-number=${parseInt(currentCellNo)+5 + 5}]`).html() === $cell.html()) { //bottom
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+5 + 5}]`));
+      }
+      if(((parseInt(currentCellNo)+5) % 5 !== 0) && $(`.cell[data-number=${parseInt(currentCellNo)+5 - 1}]`).html() === $cell.html()) { //left
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+5 - 1}]`));
+      }
+      if(((parseInt(currentCellNo)+5) % 5 !== 4) && $(`.cell[data-number=${parseInt(currentCellNo)+5 + 1}]`).html() === $cell.html()) { //right
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+5 + 1}]`));
+      }
     }
     if((currentCellNo % 5 !== 0) && $(`.cell[data-number=${parseInt(currentCellNo) - 1}]`).html() === $cell.html()) { //left
-      adjacentCount++;
-      console.log("left!");
+      // console.log("left!");
+      adjacents.push($(`.cell[data-number=${parseInt(currentCellNo) - 1}]`)); // = this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) - 1}]`), adjacentCount + 1);
+      if(((currentCellNo-1) > 4) && $(`.cell[data-number=${parseInt(currentCellNo)-1 - 5}]`).html() === $cell.html()) { //top
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-1 - 5}]`));
+      }
+      if(((currentCellNo-1) < 20) && $(`.cell[data-number=${parseInt(currentCellNo)-1 + 5}]`).html() === $cell.html()) { //bottom
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-1 + 5}]`));
+      }
+      if(((currentCellNo-1) % 5 !== 0) && $(`.cell[data-number=${parseInt(currentCellNo)-1 - 1}]`).html() === $cell.html()) { //left
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)-1 - 1}]`));
+      }
     }
     if((currentCellNo % 5 !== 4) && $(`.cell[data-number=${parseInt(currentCellNo) + 1}]`).html() === $cell.html()) { //right
-      adjacentCount++;
-      console.log("right!");
+      // console.log("right!");
+      adjacents.push($(`.cell[data-number=${parseInt(currentCellNo) + 1}]`)); // = this.adjacentSamePieces($(`.cell[data-number=${parseInt(currentCellNo) + 1}]`), adjacentCount + 1);
+      if(((parseInt(currentCellNo)+1) > 4) && $(`.cell[data-number=${parseInt(currentCellNo)+1 - 5}]`).html() === $cell.html()) { //top
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+1 - 5}]`));
+      }
+      if(((parseInt(currentCellNo)+1) < 20) && $(`.cell[data-number=${parseInt(currentCellNo)+1 + 5}]`).html() === $cell.html()) { //bottom
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+1 + 5}]`));
+      }
+      if(((parseInt(currentCellNo)+1) % 5 !== 4) && $(`.cell[data-number=${parseInt(currentCellNo)+1 + 1}]`).html() === $cell.html()) { //right
+        adjacents.push($(`.cell[data-number=${parseInt(currentCellNo)+1 + 1}]`));
+      }
     }
+
+    // console.log(`adjacentCount = ${adjacentCount}`);
+    return adjacents;
   }
 
-  combine() {
-
+  combine(currentCell) {
+    let object = currentCell.html().slice(19, -6);
+    // debugger
+    // console.log(`combining! currentPiece=${currentPiece}`);
+    // console.log(ImgValueConstants[currentPiece]);
+    return ImgValueConstants[ImgValueConstants[object]+1];
   }
 
   giveCurrentPiece() {
