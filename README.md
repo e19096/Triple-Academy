@@ -60,3 +60,7 @@ play.js
 after combines, has to check adjacent again
 
 refactor adjacentSamePieces to use recursion
+
+--add a box with directions
+--add directions on hover
+--add movement

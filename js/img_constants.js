@@ -24,7 +24,11 @@ ImgConstants = {
 
   19: "<img src='./images/mansion.png' >",
 
-  20: "<img src='./images/castle.png' >"
+  20: "<img src='./images/castle.png' >",
+
+  21: "<img src='./images/floating_castle.png' >",
+
+  22: "<img src='./images/triple_castle.png' >"
 };
 
 module.exports = ImgConstants;
