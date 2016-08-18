@@ -54,4 +54,9 @@ play.js
 
 
 **fix initial render(make sure nothing can be combined)
-...also now after adjacent cells are checked, already taken cells are not checked 
+...also now after adjacent cells are checked, already taken cells are not checked
+
+
+after combines, has to check adjacent again
+
+refactor adjacentSamePieces to use recursion
