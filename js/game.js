@@ -11,13 +11,16 @@ class Game {
     $cell.html(currentPiece);
 
     let adjacentCells = this.adjacentSamePieces($cell);
-    if(adjacentCells.length >= 2) {
+    while(adjacentCells.length >= 2) {
       console.log("time to combine!");
       let newPiece = this.combine($cell); //combine them
-      adjacentCells.forEach(function (cell) {
+
+      adjacentCells.forEach(function (cell) { //clear adjacent cells
         cell.html("");
-      });//clear adjacent cells
-      $cell.html(newPiece);
+      });
+
+      $cell.html(newPiece); //render the new piece
+      adjacentCells = this.adjacentSamePieces($cell); //check that that doesn't need to be combined
     }
     // this.adjacentSamePieces($cell);
     this.giveCurrentPiece();
