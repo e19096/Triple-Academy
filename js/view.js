@@ -12,7 +12,7 @@ class View {
         this.makeMove($(event.currentTarget));
         // console.log($(event.currentTarget).attr("data-number"));
       }
-      console.log($(event.currentTarget).html());
+      console.log($(event.currentTarget).attr("data-number"));
     });
   }
 

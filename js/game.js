@@ -13,22 +13,28 @@ class Game {
   }
 
   adjacentSamePieces($cell) {
+    let currentCellNo = $cell.attr("data-number");
+    // console.log(currentCellNo);
+    // console.log($(`.cell[data-number=${currentCellNo - 5}]`).html());
+    // console.log($(`.cell[data-number=${parseInt(currentCellNo) + 5}]`).html());
+    // console.log($(`.cell[data-number=${currentCellNo - 1}]`).html());
+    // console.log($(`.cell[data-number=${parseInt(currentCellNo) + 1}]`).html());
+
     let adjacentCount = 0; //to keep track of adjacent same objects
     //check all adjacent cells to check if same piece
-    if($(`.cell[data-number=${$cell.attr("data-number") - 5}]`).html() === $cell.html()) { //top
+    if((currentCellNo > 4) && $(`.cell[data-number=${parseInt(currentCellNo) - 5}]`).html() === $cell.html()) { //top
       adjacentCount++;
       console.log("top!");
     }
-    if($(`.cell[data-number=${$cell.attr("data-number") + 5}]`).html() === $cell.html()) { //bottom
+    if((currentCellNo < 20) && $(`.cell[data-number=${parseInt(currentCellNo) + 5}]`).html() === $cell.html()) { //bottom
       adjacentCount++;
       console.log("bottom!");
-
     }
-    if($(`.cell[data-number=${$cell.attr("data-number") - 1}]`).html() === $cell.html()) { //left
+    if((currentCellNo % 5 !== 0) && $(`.cell[data-number=${parseInt(currentCellNo) - 1}]`).html() === $cell.html()) { //left
       adjacentCount++;
       console.log("left!");
     }
-    if($(`.cell[data-number=${$cell.attr("data-number") + 1}]`).html() === $cell.html()) { //right
+    if((currentCellNo % 5 !== 4) && $(`.cell[data-number=${parseInt(currentCellNo) + 1}]`).html() === $cell.html()) { //right
       adjacentCount++;
       console.log("right!");
     }
