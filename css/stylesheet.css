@@ -70,6 +70,30 @@ h1 {
   animation-iteration-count: infinite;
 }
 
+.ta .bounce-up.bounce-right img {
+  animation-name: bounceUpRight;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+
+.ta .bounce-down.bounce-right img {
+  animation-name: bounceDownRight;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+
+.ta .bounce-up.bounce-left img {
+  animation-name: bounceUpLeft;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+
+.ta .bounce-down.bounce-left img {
+  animation-name: bounceDownLeft;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+
 @keyframes bounceUp {
   100%{
     transform:translateY(-10%);
@@ -91,6 +115,30 @@ h1 {
 @keyframes bounceRight {
   100%{
     transform:translateX(10%);
+  }
+}
+
+@keyframes bounceUpRight {
+  100%{
+    transform:translate(10%, -10%);
+  }
+}
+
+@keyframes bounceDownRight {
+  100%{
+    transform:translate(10%, 10%);
+  }
+}
+
+@keyframes bounceUpLeft {
+  100%{
+    transform:translate(-10%, -10%);
+  }
+}
+
+@keyframes bounceDownLeft {
+  100%{
+    transform:translate(-10%, 10%);
   }
 }
 

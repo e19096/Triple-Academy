@@ -1,4 +1,5 @@
 const ImgConstants = require('./img_constants');
+const ImgValueConstants = require('./img_value_constants');
 
 const View = function (game, $el) {
   this.game = game;
@@ -7,12 +8,6 @@ const View = function (game, $el) {
 
 View.prototype.bindEvents = function () { //when cell is clicked, check if empty, then send cell to make move
   let that = this;
-  $(".cell").on("click", (event) => {
-    let cellNo = parseInt($(event.currentTarget).attr("data-number"));
-    if(this.game.board.grid[Math.floor(cellNo / 5)][cellNo % 5] === "") {
-      this.makeMove($(event.currentTarget));
-    }
-  });
 
   let currentImg;
   $(".cell").hover(
@@ -24,8 +19,10 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
 
         let cellNo = parseInt($(event.currentTarget).attr("data-number"));
 
-        let adjacents = that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], that.game.currentPiece.type);
-        if(adjacents.length >= 2) {
+        let currentVal = that.game.currentPiece.value;
+        let adjacents = that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
+        while(adjacents.length >= 2) {
+          currentVal++;
           that.game.adjacentTop.forEach(function (adjacentPos) {
             $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-down");
           });
@@ -38,6 +35,7 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
           that.game.adjacentRight.forEach(function (adjacentPos) {
             $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-left");
           });
+          adjacents = that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
         }
       } else {
         currentImg = $(event.currentTarget).html();
@@ -45,21 +43,17 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
     },
     function(event){
       $(event.currentTarget).html(currentImg ? currentImg : "");
-      that.game.adjacentTop.forEach(function (adjacentPos) {
-        $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).removeClass("bounce-down");
-      });
-      that.game.adjacentBottom.forEach(function (adjacentPos) {
-        $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).removeClass("bounce-up");
-      });
-      that.game.adjacentLeft.forEach(function (adjacentPos) {
-        $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).removeClass("bounce-right");
-      });
-      that.game.adjacentRight.forEach(function (adjacentPos) {
-        $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).removeClass("bounce-left");
-      });
-
+      $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left");
     }
   );
+
+  $(".cell").on("click", (event) => {
+    let cellNo = parseInt($(event.currentTarget).attr("data-number"));
+    if(this.game.board.grid[Math.floor(cellNo / 5)][cellNo % 5] === "") {
+      this.makeMove($(event.currentTarget));
+    }
+    $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left");
+  });
 };
 
 View.prototype.makeMove = function ($cell) {

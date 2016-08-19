@@ -27,7 +27,7 @@ Game.prototype.playMove = function (clickedCellNo) {
     let biggerPiece = this.combine(clickedCellNo, adjacentPositions); //combine them
 
     // $cell.html(newPiece); //render the new piece
-    adjacentPositions = this.adjacentMatchingPositions(cellPos, biggerPiece.type); //check that that doesn't need to be combined
+    adjacentPositions = this.adjacentMatchingPositions(cellPos, biggerPiece.value); //check that that doesn't need to be combined
   }
   // debugger
     // console.log(this.board.isFull());
@@ -42,7 +42,7 @@ Game.prototype.isOver = function () {
   return this.board.isFull();
 };
 
-Game.prototype.adjacentMatchingPositions = function (gridPos, pieceType) {
+Game.prototype.adjacentMatchingPositions = function (gridPos, pieceValue) {
   //reset the adjacent arrays
   this.adjacentTop = [];
   this.adjacentBottom = [];
@@ -52,8 +52,8 @@ Game.prototype.adjacentMatchingPositions = function (gridPos, pieceType) {
   let row = gridPos[0];
   let col = gridPos[1];
 
-  if(!pieceType) { //pieceType is a string
-    pieceType = this.currentPiece.type;
+  if(!pieceValue) { //pieceValue is a string
+    pieceValue = this.currentPiece.value;
   }
 
   let adjacents = []; //to keep track of adjacent same objects
@@ -66,76 +66,84 @@ Game.prototype.adjacentMatchingPositions = function (gridPos, pieceType) {
 
   let that = this;
   //if not top row
-  if((row > 0) && (this.board.grid[topPos[0]][topPos[1]].type === pieceType)) { //top
+  if((row > 0) && (this.board.grid[topPos[0]][topPos[1]].value === pieceValue)) { //top
     // debugger
-    adjacents.push(topPos); //adjacents.concat(this.adjacentMatchingPositions(topPos, pieceType, thirdParamToExcludeBottomPosCheck?));
+    adjacents.push(topPos); //adjacents.concat(this.adjacentMatchingPositions(topPos, pieceValue, thirdParamToExcludeBottomPosCheck?));
     that.adjacentTop.push(topPos);
-    if((topPos[0] > 0) && (this.board.grid[topPos[0] - 1][topPos[1]].type === pieceType)) { //top
+    if((topPos[0] > 0) && (this.board.grid[topPos[0] - 1][topPos[1]].value === pieceValue)) { //top
       adjacents.push([topPos[0] - 1, topPos[1]]);
       that.adjacentTop.push([topPos[0] - 1, topPos[1]]);
     }
-    if(((topPos[1]) % 5 > 0) && (this.board.grid[topPos[0]][topPos[1] - 1].type === pieceType)) { //left
+    if(((topPos[1]) % 5 > 0) && (this.board.grid[topPos[0]][topPos[1] - 1].value === pieceValue)) { //left
       adjacents.push([topPos[0], topPos[1] - 1]);
       that.adjacentLeft.push([topPos[0], topPos[1] - 1]);
+      that.adjacentTop.push([topPos[0], topPos[1] - 1]);
     }
-    if(((topPos[1]) % 5 < 4) && (this.board.grid[topPos[0]][topPos[1] + 1].type === pieceType)) { //right
+    if(((topPos[1]) % 5 < 4) && (this.board.grid[topPos[0]][topPos[1] + 1].value === pieceValue)) { //right
       adjacents.push([topPos[0], topPos[1] + 1]);
       that.adjacentRight.push([topPos[0], topPos[1] + 1]);
+      that.adjacentTop.push([topPos[0], topPos[1] + 1]);
     }
   }
 
   //if not bottom row
-  if((row < 4) && (this.board.grid[bottomPos[0]][bottomPos[1]].type === pieceType)) { //bottom
+  if((row < 4) && (this.board.grid[bottomPos[0]][bottomPos[1]].value === pieceValue)) { //bottom
     // debugger
-    adjacents.push(bottomPos);  //= this.adjacentMatchingPositions(Pos, pieceType);
+    adjacents.push(bottomPos);  //= this.adjacentMatchingPositions(Pos, pieceValue);
     that.adjacentBottom.push(bottomPos);
-    if((bottomPos[0] < 4) && (this.board.grid[bottomPos[0] + 1][bottomPos[1]].type === pieceType)) { //bottom
+    if((bottomPos[0] < 4) && (this.board.grid[bottomPos[0] + 1][bottomPos[1]].value === pieceValue)) { //bottom
       adjacents.push([bottomPos[0] + 1, bottomPos[1]]);
       that.adjacentBottom.push([bottomPos[0] + 1, bottomPos[1]]);
     }
-    if(((bottomPos[1]) % 5 > 0) && (this.board.grid[bottomPos[0]][bottomPos[1] - 1].type === pieceType)) { //left
+    if(((bottomPos[1]) % 5 > 0) && (this.board.grid[bottomPos[0]][bottomPos[1] - 1].value === pieceValue)) { //left
       adjacents.push([bottomPos[0], bottomPos[1] - 1]);
       that.adjacentLeft.push([bottomPos[0], bottomPos[1] - 1]);
+      that.adjacentBottom.push([bottomPos[0], bottomPos[1] - 1]);
     }
-    if(((bottomPos[1]) % 5 < 4) && (this.board.grid[bottomPos[0]][bottomPos[1] + 1].type === pieceType)) { //right
+    if(((bottomPos[1]) % 5 < 4) && (this.board.grid[bottomPos[0]][bottomPos[1] + 1].value === pieceValue)) { //right
       adjacents.push([bottomPos[0], bottomPos[1] + 1]);
       that.adjacentRight.push([bottomPos[0], bottomPos[1] + 1]);
+      that.adjacentBottom.push([bottomPos[0], bottomPos[1] + 1]);
     }
   }
 
   //if not left-most col
-  if((col % 5 > 0) && (this.board.grid[leftPos[0]][leftPos[1]].type === pieceType)) { //left
+  if((col % 5 > 0) && (this.board.grid[leftPos[0]][leftPos[1]].value === pieceValue)) { //left
     // debugger
-    adjacents.push(leftPos);  // = this.adjacentMatchingPositions(Pos, pieceType);
+    adjacents.push(leftPos);  // = this.adjacentMatchingPositions(Pos, pieceValue);
     that.adjacentLeft.push(leftPos);
-    if((leftPos[0] > 0) && (this.board.grid[leftPos[0] - 1][leftPos[1]].type === pieceType)) { //top
+    if((leftPos[0] > 0) && (this.board.grid[leftPos[0] - 1][leftPos[1]].value === pieceValue)) { //top
       adjacents.push([leftPos[0] - 1, leftPos[1]]);
       that.adjacentTop.push([leftPos[0] - 1, leftPos[1]]);
+      that.adjacentLeft.push([leftPos[0] - 1, leftPos[1]]);
     }
-    if((leftPos[0] < 4) && (this.board.grid[leftPos[0] + 1][leftPos[1]].type === pieceType)) { //bottom
+    if((leftPos[0] < 4) && (this.board.grid[leftPos[0] + 1][leftPos[1]].value === pieceValue)) { //bottom
       adjacents.push([leftPos[0] + 1, leftPos[1]]);
       that.adjacentBottom.push([leftPos[0] + 1, leftPos[1]]);
+      that.adjacentLeft.push([leftPos[0] + 1, leftPos[1]]);
     }
-    if(((leftPos[1]) % 5 > 0) && (this.board.grid[leftPos[0]][leftPos[1] - 1].type === pieceType)) { //left
+    if(((leftPos[1]) % 5 > 0) && (this.board.grid[leftPos[0]][leftPos[1] - 1].value === pieceValue)) { //left
       adjacents.push([leftPos[0], leftPos[1] - 1]);
       that.adjacentLeft.push([leftPos[0], leftPos[1] - 1]);
     }
   }
 
   //if not right-most col
-  if((col % 5 < 4) && (this.board.grid[rightPos[0]][rightPos[1]].type === pieceType)) { //right
+  if((col % 5 < 4) && (this.board.grid[rightPos[0]][rightPos[1]].value === pieceValue)) { //right
     // debugger
-    adjacents.push(rightPos);  // = this.adjacentMatchingPositions(Pos, pieceType);
+    adjacents.push(rightPos);  // = this.adjacentMatchingPositions(Pos, pieceValue);
     that.adjacentRight.push(rightPos);
-    if((rightPos[0] > 0) && (this.board.grid[rightPos[0] - 1][rightPos[1]].type === pieceType)) { //top
+    if((rightPos[0] > 0) && (this.board.grid[rightPos[0] - 1][rightPos[1]].value === pieceValue)) { //top
       adjacents.push([rightPos[0] - 1, rightPos[1]]);
       that.adjacentTop.push([rightPos[0] - 1, rightPos[1]]);
+      that.adjacentRight.push([rightPos[0] - 1, rightPos[1]]);
     }
-    if((rightPos[0] < 4) && (this.board.grid[rightPos[0] + 1][rightPos[1]].type === pieceType)) { //bottom
+    if((rightPos[0] < 4) && (this.board.grid[rightPos[0] + 1][rightPos[1]].value === pieceValue)) { //bottom
       adjacents.push([rightPos[0] + 1, rightPos[1]]);
       that.adjacentBottom.push([rightPos[0] + 1, rightPos[1]]);
+      that.adjacentRight.push([rightPos[0] + 1, rightPos[1]]);
     }
-    if(((rightPos[1]) % 5 < 4) && (this.board.grid[rightPos[0]][rightPos[1] + 1].type === pieceType)) { //right
+    if(((rightPos[1]) % 5 < 4) && (this.board.grid[rightPos[0]][rightPos[1] + 1].value === pieceValue)) { //right
       adjacents.push([rightPos[0], rightPos[1] + 1]);
       that.adjacentRight.push([rightPos[0], rightPos[1] + 1]);
     }
@@ -189,13 +197,13 @@ Game.prototype.generateInitialSetup = function () {
       // }
     }
 
-    let adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], randomType );
+    let adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], ImgValueConstants[randomType] );
     while(adjacentPositions.length >= 2) {
       console.log("oops! close call. we need to combine! or..."); //ether pick a diff cell here or actually combine...
       randomCellNo = Math.floor(Math.random() * 25);
       // let biggerPiece = this.combine(randomCellNo, adjacentPositions);
       // adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], biggerPiece.type );
-      adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], randomType );
+      adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], ImgValueConstants[randomType] );
     }
 
       let randomPiece = new Piece(randomType, randomCellNo);
