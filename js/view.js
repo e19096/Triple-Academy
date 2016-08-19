@@ -6,13 +6,31 @@ const View = function (game, $el) {
 };
 
 View.prototype.bindEvents = function () { //when cell is clicked, check if empty, then send cell to make move
+  let that = this;
   $(".cell").on("click", (event) => {
-    if($(event.currentTarget).html() === "") {
+    // if($(event.currentTarget).html() === "") {
+    let cellNo = parseInt($(event.currentTarget).attr("data-number"));
+    if(this.game.board.grid[Math.floor(cellNo / 5)][cellNo % 5] === "") {
       this.makeMove($(event.currentTarget));
       // console.log($(event.currentTarget).attr("data-number"));
     }
     // console.log($(event.currentTarget).attr("data-number"));
   });
+
+  let currentImg;
+  $(".cell").hover(
+    function(event){
+      if($(event.currentTarget).html() === ""){
+        $(event.currentTarget).html(that.game.currentPiece.imgTag);
+        currentImg = undefined;
+      } else {
+        currentImg = $(event.currentTarget).html();
+      }
+    },
+    function(event){
+      $(event.currentTarget).html(currentImg ? currentImg : "");
+    }
+  );
 };
 
 View.prototype.makeMove = function ($cell) {

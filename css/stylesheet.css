@@ -42,6 +42,76 @@ h1 {
   border: 1px solid darkgreen;
 }
 
+.ta li img:hover {
+
+}
+
+.ta .bounce-up img:hover {
+  animation-name: bounce;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+.ta .bounce-down img:hover {
+  animation-name: bounce;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+.ta .bounce-left img:hover {
+  animation-name: bounce;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+.ta .bounce-right img:hover {
+  animation-name: bounce;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes bounceUp {
+  from {
+    margin-left: 95%%;
+    width: 100%;
+  }
+
+  to {
+    margin-left: -5%;
+    width: 100%;
+  }
+}
+@keyframes bounceDown {
+  from {
+    margin-left: 95%%;
+    width: 100%;
+  }
+
+  to {
+    margin-left: -5%;
+    width: 100%;
+  }
+}
+@keyframes bounceLeft {
+  from {
+    margin-left: 95%%;
+    width: 100%;
+  }
+
+  to {
+    margin-left: -5%;
+    width: 100%;
+  }
+}
+@keyframes bounceRight {
+  from {
+    margin-left: 95%%;
+    width: 100%;
+  }
+
+  to {
+    margin-left: -5%;
+    width: 100%;
+  }
+}
+
 .ta .current-piece {
   position: absolute;
   width: 50px;
@@ -64,4 +134,5 @@ h1 {
   text-align: center;
   display: inline;
   width: 200px;
+  color: red;
 }

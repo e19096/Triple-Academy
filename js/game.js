@@ -132,7 +132,7 @@ Game.prototype.combine = function (cellNo, adjacentPositions) {
 
 Game.prototype.giveCurrentPiece = function () {
   //pick random piece (from: grass, bush, tree)
-  let randomType = ImgConstants[Math.floor(Math.random() * (19 - 1) + 1)];
+  let randomType = ImgConstants[Math.floor(Math.random() * (23 - 1) + 1)];
   let randomCellNo = Math.floor(Math.random() * 25);
   return new Piece(randomType, randomCellNo);
 };
@@ -143,7 +143,7 @@ Game.prototype.generateInitialSetup = function () {
   let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 
   for(let i = 0; i < numPieces; i++) {
-    let randomType = ImgConstants[Math.floor(Math.random() * (19 - 1) + 1)];
+    let randomType = ImgConstants[Math.floor(Math.random() * (24 - 1) + 1)];
     let randomCellNo = Math.floor(Math.random() * 25);
 
     // make sure cell is empty else do it again

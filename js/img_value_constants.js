@@ -15,7 +15,7 @@ ImgValueConstants = {
   "mansion": 5,
   "castle": 6,
   "floating_castle": 7,
-  "triple_castle": 8,
+  "aa": 8,
 
   0 : "<img src=\"./images/grass.png\" >",
   1 : "<img src=\"./images/bush.png\" >",
@@ -25,7 +25,7 @@ ImgValueConstants = {
   5 : "<img src=\"./images/mansion.png\" >",
   6 : "<img src=\"./images/castle.png\" >",
   7 : "<img src='./images/floating_castle.png' >",
-  8 : "<img src='./images/triple_castle.png' >"
+  8 : "<img src='./images/aa.png' >"
 };
 
 module.exports = ImgValueConstants;
