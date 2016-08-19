@@ -42,27 +42,27 @@ h1 {
   border: 1px solid darkgreen;
 }
 
-.ta li img:hover {
-
+.ta li img {
+  /*transition-delay: 1s;*/
 }
 
-.ta .bounce-up img:hover {
-  animation-name: bounce;
+.ta .bounce-up img {
+  animation-name: bounceUp;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
 }
-.ta .bounce-down img:hover {
-  animation-name: bounce;
+.ta .bounce-down img {
+  animation-name: bounceUp;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
 }
-.ta .bounce-left img:hover {
-  animation-name: bounce;
+.ta .bounce-left img {
+  animation-name: bounceUp;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
 }
-.ta .bounce-right img:hover {
-  animation-name: bounce;
+.ta .bounce-right img {
+  animation-name: bounceUp;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
 }

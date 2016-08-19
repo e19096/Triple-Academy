@@ -74,13 +74,52 @@
 	};
 
 	View.prototype.bindEvents = function () { //when cell is clicked, check if empty, then send cell to make move
+	  let that = this;
 	  $(".cell").on("click", (event) => {
-	    if($(event.currentTarget).html() === "") {
+	    // if($(event.currentTarget).html() === "") {
+	    let cellNo = parseInt($(event.currentTarget).attr("data-number"));
+	    if(this.game.board.grid[Math.floor(cellNo / 5)][cellNo % 5] === "") {
 	      this.makeMove($(event.currentTarget));
 	      // console.log($(event.currentTarget).attr("data-number"));
 	    }
 	    // console.log($(event.currentTarget).attr("data-number"));
 	  });
+
+	  let currentImg;
+	  $(".cell").hover(
+	    function(event){
+	      if($(event.currentTarget).html() === ""){
+
+	        $(event.currentTarget).html(that.game.currentPiece.imgTag);
+	        currentImg = undefined;
+
+	        let cellNo = parseInt($(event.currentTarget).attr("data-number"));
+	        that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], that.game.currentPiece.type);
+
+	        that.game.adjacentTop.forEach(function (adjacentPos) {
+	          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-down");
+	          // debugger
+	        });
+	        that.game.adjacentBottom.forEach(function (adjacentPos) {
+	          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-up");
+	          // debugger
+	        });
+	        that.game.adjacentLeft.forEach(function (adjacentPos) {
+	          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-right");
+	          // debugger
+	        });
+	        that.game.adjacentRight.forEach(function (adjacentPos) {
+	          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-left");
+	          // debugger
+	        });
+	      } else {
+	        currentImg = $(event.currentTarget).html();
+	      }
+	    },
+	    function(event){
+	      $(event.currentTarget).html(currentImg ? currentImg : "");
+	    }
+	  );
 	};
 
 	View.prototype.makeMove = function ($cell) {
@@ -141,6 +180,11 @@
 	  this.pieces = [];
 	  this.currentPiece = this.giveCurrentPiece();
 	  this.changed = [];
+
+	  this.adjacentTop = [];
+	  this.adjacentBottom = [];
+	  this.adjacentLeft = [];
+	  this.adjacentRight = [];
 	}
 
 	Game.prototype.playMove = function (clickedCellNo) {
@@ -171,6 +215,12 @@
 	};
 
 	Game.prototype.adjacentMatchingPositions = function (gridPos, pieceType) {
+	  //reset the adjacent arrays
+	  this.adjacentTop = [];
+	  this.adjacentBottom = [];
+	  this.adjacentLeft = [];
+	  this.adjacentRight = [];
+
 	  let row = gridPos[0];
 	  let col = gridPos[1];
 
@@ -186,18 +236,23 @@
 	  let leftPos = [row, col - 1];
 	  let rightPos = [row, col + 1];
 
+	  let that = this;
 	  //if not top row
 	  if((row > 0) && (this.board.grid[topPos[0]][topPos[1]].type === pieceType)) { //top
 	    // debugger
 	    adjacents.push(topPos); //adjacents.concat(this.adjacentMatchingPositions(topPos, pieceType, thirdParamToExcludeBottomPosCheck?));
+	    that.adjacentTop.push(topPos);
 	    if((topPos[0] > 0) && (this.board.grid[topPos[0] - 1][topPos[1]].type === pieceType)) { //top
 	      adjacents.push([topPos[0] - 1, topPos[1]]);
+	      that.adjacentTop.push([topPos[0] - 1, topPos[1]]);
 	    }
 	    if(((topPos[1]) % 5 > 0) && (this.board.grid[topPos[0]][topPos[1] - 1].type === pieceType)) { //left
 	      adjacents.push([topPos[0], topPos[1] - 1]);
+	      that.adjacentLeft.push([topPos[0], topPos[1] - 1]);
 	    }
 	    if(((topPos[1]) % 5 < 4) && (this.board.grid[topPos[0]][topPos[1] + 1].type === pieceType)) { //right
 	      adjacents.push([topPos[0], topPos[1] + 1]);
+	      that.adjacentRight.push([topPos[0], topPos[1] + 1]);
 	    }
 	  }
 
@@ -205,14 +260,18 @@
 	  if((row < 4) && (this.board.grid[bottomPos[0]][bottomPos[1]].type === pieceType)) { //bottom
 	    // debugger
 	    adjacents.push(bottomPos);  //= this.adjacentMatchingPositions(Pos, pieceType);
+	    that.adjacentBottom.push(bottomPos);
 	    if((bottomPos[0] < 4) && (this.board.grid[bottomPos[0] + 1][bottomPos[1]].type === pieceType)) { //bottom
 	      adjacents.push([bottomPos[0] + 1, bottomPos[1]]);
+	      that.adjacentBottom.push([bottomPos[0] + 1, bottomPos[1]]);
 	    }
 	    if(((bottomPos[1]) % 5 > 0) && (this.board.grid[bottomPos[0]][bottomPos[1] - 1].type === pieceType)) { //left
 	      adjacents.push([bottomPos[0], bottomPos[1] - 1]);
+	      that.adjacentLeft.push([bottomPos[0], bottomPos[1] - 1]);
 	    }
 	    if(((bottomPos[1]) % 5 < 4) && (this.board.grid[bottomPos[0]][bottomPos[1] + 1].type === pieceType)) { //right
 	      adjacents.push([bottomPos[0], bottomPos[1] + 1]);
+	      that.adjacentRight.push([bottomPos[0], bottomPos[1] + 1]);
 	    }
 	  }
 
@@ -220,14 +279,18 @@
 	  if((col % 5 > 0) && (this.board.grid[leftPos[0]][leftPos[1]].type === pieceType)) { //left
 	    // debugger
 	    adjacents.push(leftPos);  // = this.adjacentMatchingPositions(Pos, pieceType);
+	    that.adjacentLeft.push(leftPos);
 	    if((leftPos[0] > 0) && (this.board.grid[leftPos[0] - 1][leftPos[1]].type === pieceType)) { //top
 	      adjacents.push([leftPos[0] - 1, leftPos[1]]);
+	      that.adjacentTop.push([leftPos[0] - 1, leftPos[1]]);
 	    }
 	    if((leftPos[0] < 4) && (this.board.grid[leftPos[0] + 1][leftPos[1]].type === pieceType)) { //bottom
 	      adjacents.push([leftPos[0] + 1, leftPos[1]]);
+	      that.adjacentBottom.push([leftPos[0] + 1, leftPos[1]]);
 	    }
 	    if(((leftPos[1]) % 5 > 0) && (this.board.grid[leftPos[0]][leftPos[1] - 1].type === pieceType)) { //left
 	      adjacents.push([leftPos[0], leftPos[1] - 1]);
+	      that.adjacentLeft.push([leftPos[0], leftPos[1] - 1]);
 	    }
 	  }
 
@@ -235,14 +298,18 @@
 	  if((col % 5 < 4) && (this.board.grid[rightPos[0]][rightPos[1]].type === pieceType)) { //right
 	    // debugger
 	    adjacents.push(rightPos);  // = this.adjacentMatchingPositions(Pos, pieceType);
+	    that.adjacentRight.push(rightPos);
 	    if((rightPos[0] > 0) && (this.board.grid[rightPos[0] - 1][rightPos[1]].type === pieceType)) { //top
 	      adjacents.push([rightPos[0] - 1, rightPos[1]]);
+	      that.adjacentTop.push([rightPos[0] - 1, rightPos[1]]);
 	    }
 	    if((rightPos[0] < 4) && (this.board.grid[rightPos[0] + 1][rightPos[1]].type === pieceType)) { //bottom
 	      adjacents.push([rightPos[0] + 1, rightPos[1]]);
+	      that.adjacentBottom.push([rightPos[0] + 1, rightPos[1]]);
 	    }
 	    if(((rightPos[1]) % 5 < 4) && (this.board.grid[rightPos[0]][rightPos[1] + 1].type === pieceType)) { //right
 	      adjacents.push([rightPos[0], rightPos[1] + 1]);
+	      that.adjacentRight.push([rightPos[0], rightPos[1] + 1]);
 	    }
 	  }
 
@@ -265,7 +332,7 @@
 
 	Game.prototype.giveCurrentPiece = function () {
 	  //pick random piece (from: grass, bush, tree)
-	  let randomType = ImgConstants[Math.floor(Math.random() * (19 - 1) + 1)];
+	  let randomType = ImgConstants[Math.floor(Math.random() * (23 - 1) + 1)];
 	  let randomCellNo = Math.floor(Math.random() * 25);
 	  return new Piece(randomType, randomCellNo);
 	};
@@ -276,7 +343,7 @@
 	  let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 
 	  for(let i = 0; i < numPieces; i++) {
-	    let randomType = ImgConstants[Math.floor(Math.random() * (19 - 1) + 1)];
+	    let randomType = ImgConstants[Math.floor(Math.random() * (24 - 1) + 1)];
 	    let randomCellNo = Math.floor(Math.random() * 25);
 
 	    // make sure cell is empty else do it again
@@ -329,17 +396,22 @@
 	  8:  "grass",//"<img src='./images/grass.png' >",
 	  9:  "grass",//"<img src='./images/grass.png' >",
 	  10: "grass",//"<img src='./images/grass.png' >",
+	  11: "grass",//"<img src='./images/grass.png' >",
+	  12: "grass",//"<img src='./images/grass.png' >",
+	  13: "grass",//"<img src='./images/grass.png' >",
+	  14: "grass",//"<img src='./images/grass.png' >",
+	  15: "grass",//"<img src='./images/grass.png' >",
 
-	  11: "bush",//"<img src='./images/bush.png' >",
-	  12: "bush",//"<img src='./images/bush.png' >",
-	  13: "bush",//"<img src='./images/bush.png' >",
-	  14: "bush",//"<img src='./images/bush.png' >",
-	  15: "bush",//"<img src='./images/bush.png' >",
+	  16: "bush",//"<img src='./images/bush.png' >",
+	  17: "bush",//"<img src='./images/bush.png' >",
+	  18: "bush",//"<img src='./images/bush.png' >",
+	  19: "bush",//"<img src='./images/bush.png' >",
+	  20: "bush",//"<img src='./images/bush.png' >",
 
-	  16: "tree",//"<img src='./images/tree.png' >",
-	  17: "tree",//"<img src='./images/tree.png' >",
+	  21: "tree",//"<img src='./images/tree.png' >",
+	  22: "tree",//"<img src='./images/tree.png' >",
 
-	  18: "hut"//"<img src='./images/hut.png' >",
+	  23: "hut"//"<img src='./images/hut.png' >",
 	};
 
 	module.exports = ImgConstants;
@@ -366,7 +438,7 @@
 	  "mansion": 5,
 	  "castle": 6,
 	  "floating_castle": 7,
-	  "triple_castle": 8,
+	  "aa": 8,
 
 	  0 : "<img src=\"./images/grass.png\" >",
 	  1 : "<img src=\"./images/bush.png\" >",
@@ -376,7 +448,7 @@
 	  5 : "<img src=\"./images/mansion.png\" >",
 	  6 : "<img src=\"./images/castle.png\" >",
 	  7 : "<img src='./images/floating_castle.png' >",
-	  8 : "<img src='./images/triple_castle.png' >"
+	  8 : "<img src='./images/aa.png' >"
 	};
 
 	module.exports = ImgValueConstants;

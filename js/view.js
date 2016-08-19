@@ -21,8 +21,29 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
   $(".cell").hover(
     function(event){
       if($(event.currentTarget).html() === ""){
+
         $(event.currentTarget).html(that.game.currentPiece.imgTag);
         currentImg = undefined;
+
+        let cellNo = parseInt($(event.currentTarget).attr("data-number"));
+        that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], that.game.currentPiece.type);
+
+        that.game.adjacentTop.forEach(function (adjacentPos) {
+          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-down");
+          // debugger
+        });
+        that.game.adjacentBottom.forEach(function (adjacentPos) {
+          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-up");
+          // debugger
+        });
+        that.game.adjacentLeft.forEach(function (adjacentPos) {
+          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-right");
+          // debugger
+        });
+        that.game.adjacentRight.forEach(function (adjacentPos) {
+          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-left");
+          // debugger
+        });
       } else {
         currentImg = $(event.currentTarget).html();
       }
