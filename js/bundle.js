@@ -138,22 +138,26 @@
 	}
 
 	Game.prototype.playMove = function (clickedCellNo) {
-	  this.changed = [clickedCellNo];
+	  if(this.board.isFull()){
+	    console.log("oh no! you let the board get full!");
+	  } else {
+	    this.changed = [clickedCellNo];
 
-	  let cellPos = [Math.floor(clickedCellNo / 5), clickedCellNo % 5];
-	  this.board.grid[cellPos[0]][cellPos[1]] = this.currentPiece;
+	    let cellPos = [Math.floor(clickedCellNo / 5), clickedCellNo % 5];
+	    this.board.grid[cellPos[0]][cellPos[1]] = this.currentPiece;
 
-	  let adjacentPositions = this.adjacentMatchingPositions(cellPos);
-	  while(adjacentPositions.length >= 2) {
-	    console.log("time to combine!");
-	    let biggerPiece = this.combine(clickedCellNo, adjacentPositions); //combine them
+	    let adjacentPositions = this.adjacentMatchingPositions(cellPos);
+	    while(adjacentPositions.length >= 2) {
+	      console.log("time to combine!");
+	      let biggerPiece = this.combine(clickedCellNo, adjacentPositions); //combine them
 
-	    // $cell.html(newPiece); //render the new piece
-	    adjacentPositions = this.adjacentMatchingPositions(cellPos, biggerPiece.type); //check that that doesn't need to be combined
+	      // $cell.html(newPiece); //render the new piece
+	      adjacentPositions = this.adjacentMatchingPositions(cellPos, biggerPiece.type); //check that that doesn't need to be combined
+	    }
+	  // debugger
+	    // console.log(this.board.isFull());
+	    this.currentPiece = this.giveCurrentPiece();
 	  }
-	// debugger
-	  console.log(this.board.isFull());
-	  this.currentPiece = this.giveCurrentPiece();
 	};
 
 	Game.prototype.adjacentMatchingPositions = function (gridPos, pieceType) {
@@ -271,10 +275,22 @@
 	      console.log("oops! there's already something there!");
 	      randomCellNo = Math.floor(Math.random() * 25);
 
-	      while( this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], randomType ).length >= 2) {
-	        console.log("oops! pick a different cell! (would need to combine)"); //ether pick a diff cell here or actually combine...
-	        randomCellNo = Math.floor(Math.random() * 25);
-	      }
+	      // let adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], randomType );
+	      // while(adjacentPositions.length >= 2) {
+	      //   console.log("oops! close call. let's combine!"); //ether pick a diff cell here or actually combine...
+	      //   // randomCellNo = Math.floor(Math.random() * 25);
+	      //   let biggerPiece = this.combine(randomCellNo, adjacentPositions);
+	      //   adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], biggerPiece.type );
+	      // }
+	    }
+
+	    let adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], randomType );
+	    while(adjacentPositions.length >= 2) {
+	      console.log("oops! close call. we need to combine! or..."); //ether pick a diff cell here or actually combine...
+	      randomCellNo = Math.floor(Math.random() * 25);
+	      // let biggerPiece = this.combine(randomCellNo, adjacentPositions);
+	      // adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], biggerPiece.type );
+	      adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], randomType );
 	    }
 
 	      let randomPiece = new Piece(randomType, randomCellNo);
