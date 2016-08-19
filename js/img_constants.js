@@ -16,17 +16,28 @@ ImgConstants = {
   13: "grass",//"<img src='./images/grass.png' >",
   14: "grass",//"<img src='./images/grass.png' >",
   15: "grass",//"<img src='./images/grass.png' >",
+  16: "grass",//"<img src='./images/grass.png' >",
+  17: "grass",//"<img src='./images/grass.png' >",
+  18: "grass",//"<img src='./images/grass.png' >",
+  19: "grass",//"<img src='./images/grass.png' >",
+  20: "grass",//"<img src='./images/grass.png' >",
 
-  16: "bush",//"<img src='./images/bush.png' >",
-  17: "bush",//"<img src='./images/bush.png' >",
-  18: "bush",//"<img src='./images/bush.png' >",
-  19: "bush",//"<img src='./images/bush.png' >",
-  20: "bush",//"<img src='./images/bush.png' >",
+  21: "bush",//"<img src='./images/bush.png' >",
+  22: "bush",//"<img src='./images/bush.png' >",
+  23: "bush",//"<img src='./images/bush.png' >",
+  24: "bush",//"<img src='./images/bush.png' >",
+  25: "bush",//"<img src='./images/bush.png' >",
+  26: "bush",//"<img src='./images/bush.png' >",
+  27: "bush",//"<img src='./images/bush.png' >",
+  28: "bush",//"<img src='./images/bush.png' >",
 
-  21: "tree",//"<img src='./images/tree.png' >",
-  22: "tree",//"<img src='./images/tree.png' >",
+  29: "tree",//"<img src='./images/tree.png' >",
+  30: "tree",//"<img src='./images/tree.png' >",
+  31: "tree",//"<img src='./images/tree.png' >",
 
-  23: "hut"//"<img src='./images/hut.png' >",
+  32: "hut",//"<img src='./images/hut.png' >",
+
+  33: "bear"
 };
 
 module.exports = ImgConstants;

@@ -48,7 +48,7 @@ img {
   float: left;
   width: 55px;
   height: 55px;
-  border: 1px solid #76c176;
+  border: 1px solid transparent;
   background: transparent;
   border-radius: 5px;
 }
@@ -68,11 +68,11 @@ img {
 
 .ta img {
   /*transition-delay: 1s;*/
-  transition: all .2s ease-in-out;
+  /*transition: all .2s ease-in-out;*/
 }
 
 .ta .bounce-up img {
-  transition: all .2s ease-in-out;
+  /*transition: all .2s ease-in-out;*/
   animation-name: bounceUp;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
@@ -207,7 +207,7 @@ img {
 
 .zoom:hover {
   animation-name: zoom;
-  animation-duration: 0.55s;
+  animation-duration: 0.5s;
   animation-iteration-count: infinite;
 }
 

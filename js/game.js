@@ -173,7 +173,7 @@ Game.prototype.combine = function (cellNo, adjacentPositions) {
 
 Game.prototype.giveCurrentPiece = function () {
   //pick random piece (from: grass, bush, tree)
-  let randomType = ImgConstants[Math.floor(Math.random() * (23 - 1) + 1)];
+  let randomType = ImgConstants[Math.floor(Math.random() * (34 - 1) + 1)];
   let randomCellNo = Math.floor(Math.random() * 25);
   return new Piece(randomType, randomCellNo);
 };
@@ -184,7 +184,7 @@ Game.prototype.generateInitialSetup = function () {
   let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 
   for(let i = 0; i < numPieces; i++) {
-    let randomType = ImgConstants[Math.floor(Math.random() * (25 - 1) + 1)];
+    let randomType = ImgConstants[Math.floor(Math.random() * (33 - 1) + 1)];
     let randomCellNo = Math.floor(Math.random() * 25);
 
     // make sure cell is empty else do it again
@@ -204,6 +204,7 @@ Game.prototype.generateInitialSetup = function () {
 
     let adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], ImgValueConstants[randomType] );
     // debugger
+    console.log(`number of adjacent pos: ${adjacentPositions.length}`);
     while(adjacentPositions.length >= 2) {
       console.log("oops! close call. we need to combine! or..."); //ether pick a diff cell here or actually combine...
       randomCellNo = Math.floor(Math.random() * 25);

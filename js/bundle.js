@@ -353,7 +353,7 @@
 
 	Game.prototype.giveCurrentPiece = function () {
 	  //pick random piece (from: grass, bush, tree)
-	  let randomType = ImgConstants[Math.floor(Math.random() * (23 - 1) + 1)];
+	  let randomType = ImgConstants[Math.floor(Math.random() * (34 - 1) + 1)];
 	  let randomCellNo = Math.floor(Math.random() * 25);
 	  return new Piece(randomType, randomCellNo);
 	};
@@ -364,7 +364,7 @@
 	  let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 
 	  for(let i = 0; i < numPieces; i++) {
-	    let randomType = ImgConstants[Math.floor(Math.random() * (25 - 1) + 1)];
+	    let randomType = ImgConstants[Math.floor(Math.random() * (33 - 1) + 1)];
 	    let randomCellNo = Math.floor(Math.random() * 25);
 
 	    // make sure cell is empty else do it again
@@ -384,6 +384,7 @@
 
 	    let adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], ImgValueConstants[randomType] );
 	    // debugger
+	    console.log(`number of adjacent pos: ${adjacentPositions.length}`);
 	    while(adjacentPositions.length >= 2) {
 	      console.log("oops! close call. we need to combine! or..."); //ether pick a diff cell here or actually combine...
 	      randomCellNo = Math.floor(Math.random() * 25);
@@ -423,17 +424,28 @@
 	  13: "grass",//"<img src='./images/grass.png' >",
 	  14: "grass",//"<img src='./images/grass.png' >",
 	  15: "grass",//"<img src='./images/grass.png' >",
+	  16: "grass",//"<img src='./images/grass.png' >",
+	  17: "grass",//"<img src='./images/grass.png' >",
+	  18: "grass",//"<img src='./images/grass.png' >",
+	  19: "grass",//"<img src='./images/grass.png' >",
+	  20: "grass",//"<img src='./images/grass.png' >",
 
-	  16: "bush",//"<img src='./images/bush.png' >",
-	  17: "bush",//"<img src='./images/bush.png' >",
-	  18: "bush",//"<img src='./images/bush.png' >",
-	  19: "bush",//"<img src='./images/bush.png' >",
-	  20: "bush",//"<img src='./images/bush.png' >",
+	  21: "bush",//"<img src='./images/bush.png' >",
+	  22: "bush",//"<img src='./images/bush.png' >",
+	  23: "bush",//"<img src='./images/bush.png' >",
+	  24: "bush",//"<img src='./images/bush.png' >",
+	  25: "bush",//"<img src='./images/bush.png' >",
+	  26: "bush",//"<img src='./images/bush.png' >",
+	  27: "bush",//"<img src='./images/bush.png' >",
+	  28: "bush",//"<img src='./images/bush.png' >",
 
-	  21: "tree",//"<img src='./images/tree.png' >",
-	  22: "tree",//"<img src='./images/tree.png' >",
+	  29: "tree",//"<img src='./images/tree.png' >",
+	  30: "tree",//"<img src='./images/tree.png' >",
+	  31: "tree",//"<img src='./images/tree.png' >",
 
-	  23: "hut"//"<img src='./images/hut.png' >",
+	  32: "hut",//"<img src='./images/hut.png' >",
+
+	  33: "bear"
 	};
 
 	module.exports = ImgConstants;
@@ -452,25 +464,27 @@
 	  // "<img src=\"./images/mansion.png\" >": 5,
 	  // "<img src=\"./images/castle.png\" >": 6,
 
-	  "grass": 0,
-	  "bush": 1,
-	  "tree": 2,
-	  "hut": 3,
-	  "house": 4,
-	  "mansion": 5,
-	  "aa": 6,
-	  // "floating_castle": 7,
-	  // "aa": 8,
+	  "bear"    : 0,
+	  "grass"   : 1,
+	  "bush"    : 2,
+	  "tree"    : 3,
+	  "hut"     : 4,
+	  "house"   : 5,
+	  "mansion" : 6,
+	  "aa"      : 7,
+	  // "floating_castle": 8,
+	  // "aa": 9,
 
-	  0 : "<img src=\"./images/grass.png\" >",
-	  1 : "<img src=\"./images/bush.png\" >",
-	  2 : "<img src=\"./images/tree.png\" >",
-	  3 : "<img src=\"./images/hut.png\" >",
-	  4 : "<img src=\"./images/house.png\" >",
-	  5 : "<img src=\"./images/mansion.png\" >",
-	  6 : "<img src=\"./images/aa.png\" >",
-	  // 7 : "<img src='./images/floating_castle.png' >",
-	  // 8 : "<img src='./images/aa.png' >"
+	  0 : "<img src=\"./images/bear.png\" >",
+	  1 : "<img src=\"./images/grass.png\" >",
+	  2 : "<img src=\"./images/bush.png\" >",
+	  3 : "<img src=\"./images/tree.png\" >",
+	  4 : "<img src=\"./images/hut.png\" >",
+	  5 : "<img src=\"./images/house.png\" >",
+	  6 : "<img src=\"./images/mansion.png\" >",
+	  7 : "<img src=\"./images/aa.png\" >"
+	  // 8 : "<img src='./images/floating_castle.png' >",
+	  // 9 : "<img src='./images/aa.png' >"
 	};
 
 	module.exports = ImgValueConstants;
