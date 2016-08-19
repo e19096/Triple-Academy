@@ -8,13 +8,10 @@ const View = function (game, $el) {
 View.prototype.bindEvents = function () { //when cell is clicked, check if empty, then send cell to make move
   let that = this;
   $(".cell").on("click", (event) => {
-    // if($(event.currentTarget).html() === "") {
     let cellNo = parseInt($(event.currentTarget).attr("data-number"));
     if(this.game.board.grid[Math.floor(cellNo / 5)][cellNo % 5] === "") {
       this.makeMove($(event.currentTarget));
-      // console.log($(event.currentTarget).attr("data-number"));
     }
-    // console.log($(event.currentTarget).attr("data-number"));
   });
 
   let currentImg;
@@ -26,30 +23,41 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
         currentImg = undefined;
 
         let cellNo = parseInt($(event.currentTarget).attr("data-number"));
-        that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], that.game.currentPiece.type);
 
-        that.game.adjacentTop.forEach(function (adjacentPos) {
-          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-down");
-          // debugger
-        });
-        that.game.adjacentBottom.forEach(function (adjacentPos) {
-          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-up");
-          // debugger
-        });
-        that.game.adjacentLeft.forEach(function (adjacentPos) {
-          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-right");
-          // debugger
-        });
-        that.game.adjacentRight.forEach(function (adjacentPos) {
-          $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-left");
-          // debugger
-        });
+        let adjacents = that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], that.game.currentPiece.type);
+        if(adjacents.length >= 2) {
+          that.game.adjacentTop.forEach(function (adjacentPos) {
+            $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-down");
+          });
+          that.game.adjacentBottom.forEach(function (adjacentPos) {
+            $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-up");
+          });
+          that.game.adjacentLeft.forEach(function (adjacentPos) {
+            $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-right");
+          });
+          that.game.adjacentRight.forEach(function (adjacentPos) {
+            $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).addClass("bounce-left");
+          });
+        }
       } else {
         currentImg = $(event.currentTarget).html();
       }
     },
     function(event){
       $(event.currentTarget).html(currentImg ? currentImg : "");
+      that.game.adjacentTop.forEach(function (adjacentPos) {
+        $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).removeClass("bounce-down");
+      });
+      that.game.adjacentBottom.forEach(function (adjacentPos) {
+        $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).removeClass("bounce-up");
+      });
+      that.game.adjacentLeft.forEach(function (adjacentPos) {
+        $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).removeClass("bounce-right");
+      });
+      that.game.adjacentRight.forEach(function (adjacentPos) {
+        $(`.cell[data-number=${adjacentPos[0] * 5 + adjacentPos[1]}]`).removeClass("bounce-left");
+      });
+
     }
   );
 };
@@ -61,7 +69,6 @@ View.prototype.makeMove = function ($cell) {
   let that = this;
   this.game.changed.forEach(function(changedCellNo) {
     $(`.cell[data-number=${changedCellNo}]`).html(that.game.board.grid[Math.floor(changedCellNo / 5)][changedCellNo % 5].imgTag ? that.game.board.grid[Math.floor(changedCellNo / 5)][changedCellNo % 5].imgTag : "");
-    // debugger
   });
   //also render new current piece
   $(`.current-piece`).html(this.game.currentPiece.imgTag);

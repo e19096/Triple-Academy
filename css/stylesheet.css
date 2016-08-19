@@ -51,64 +51,46 @@ h1 {
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
 }
+
 .ta .bounce-down img {
-  animation-name: bounceUp;
+  animation-name: bounceDown;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
 }
+
 .ta .bounce-left img {
-  animation-name: bounceUp;
+  animation-name: bounceLeft;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
 }
+
 .ta .bounce-right img {
-  animation-name: bounceUp;
+  animation-name: bounceRight;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
 }
 
 @keyframes bounceUp {
-  from {
-    margin-left: 95%%;
-    width: 100%;
-  }
-
-  to {
-    margin-left: -5%;
-    width: 100%;
+  100%{
+    transform:translateY(-10%);
   }
 }
+
 @keyframes bounceDown {
-  from {
-    margin-left: 95%%;
-    width: 100%;
-  }
-
-  to {
-    margin-left: -5%;
-    width: 100%;
+  100%{
+    transform:translateY(10%);
   }
 }
+
 @keyframes bounceLeft {
-  from {
-    margin-left: 95%%;
-    width: 100%;
-  }
-
-  to {
-    margin-left: -5%;
-    width: 100%;
+  100%{
+    transform:translateX(-10%);
   }
 }
-@keyframes bounceRight {
-  from {
-    margin-left: 95%%;
-    width: 100%;
-  }
 
-  to {
-    margin-left: -5%;
-    width: 100%;
+@keyframes bounceRight {
+  100%{
+    transform:translateX(10%);
   }
 }
 
