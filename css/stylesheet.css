@@ -1,12 +1,20 @@
+html {
+  background-color: #4f7f49;
+  /*background-image: */
+}
+
 h1, figure, ul, li {
   text-align: center;
   padding: 0;
   margin: 0;
-  font-family: sans-serif;
 }
 
 h1 {
   margin-bottom: 20px;
+  font-family: sans-serif;
+  color: white;
+  font-weight: normal;
+  letter-spacing: 1px;
 }
 
 .ta {
@@ -24,22 +32,30 @@ h1 {
   list-style: none;
   width: 260px;
   height: 260px;
-  border: 1px solid limegreen;
+  border: 2px solid #53ad53;
+  border-radius: 5px;
+  background-color: #76c176;
 }
 
 .ta li {
   float: left;
   width: 50px;
   height: 50px;
-  border: 1px solid limegreen;
-  background-color: lightgreen;
+  border: 1px solid #76c176;
+  background: transparent;
 }
 
 .ta li:hover {
   cursor: pointer;
-  opacity: 0.6;
-  transition: 1s;
-  border: 1px solid darkgreen;
+  opacity: 0.65;
+  /*transition: 1s;*/
+  /*border: 1px solid darkgreen;*/
+  /*border-radius: 5px;*/
+}
+
+.ta .has-piece {
+  background-color: #31c331;
+  border-radius: 10px;
 }
 
 .ta li img {
@@ -143,11 +159,15 @@ h1 {
 }
 
 .ta .current-piece {
-  position: absolute;
+  /*position: absolute;*/
   width: 50px;
   height: 50px;
-  border: 2px solid lightgray;
-  margin-left: 34%;
+  border: 2px solid darkgray;
+  border-radius: 50px;
+  /*margin-left: 34%;*/
+  margin-top: 5px;;
+  background-color: #76c176;
+  display: inline-block;
 }
 
 .game-over ul, .game-over li, .game-over div {

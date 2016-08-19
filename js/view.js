@@ -51,6 +51,7 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
     let cellNo = parseInt($(event.currentTarget).attr("data-number"));
     if(this.game.board.grid[Math.floor(cellNo / 5)][cellNo % 5] === "") {
       this.makeMove($(event.currentTarget));
+      // $(event.currentTarget).addClass("has-piece");
     }
     $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left");
   });
