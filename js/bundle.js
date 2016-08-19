@@ -82,6 +82,8 @@
 	    function(event){
 	      if($(event.currentTarget).html() === ""){
 
+	        $(event.currentTarget).addClass("zoom");
+
 	        $(event.currentTarget).html(that.game.currentPiece.imgTag);
 	        currentImg = undefined;
 
@@ -121,7 +123,7 @@
 	      this.makeMove($(event.currentTarget));
 	      // $(event.currentTarget).addClass("has-piece");
 	    }
-	    $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left");
+	    $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left zoom");
 	  });
 	};
 
@@ -136,7 +138,11 @@
 	  //also render new current piece
 	  $(`.current-piece`).html(this.game.currentPiece.imgTag);
 
-	  if(this.game.isOver()) {
+	  if(this.game.won) {
+	    this.$el.addClass("game-won");
+	    console.log("you did it, really. good work.");
+	    $(".cell").html(ImgValueConstants[6]);
+	  } else if(this.game.isOver()) {
 	    this.$el.addClass("game-over");
 	    this.$el.append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
 	    console.log("it's over. seriously.");
@@ -187,6 +193,8 @@
 	  this.adjacentBottom = [];
 	  this.adjacentLeft = [];
 	  this.adjacentRight = [];
+
+	  this.won = false;
 	}
 
 	Game.prototype.playMove = function (clickedCellNo) {
@@ -200,16 +208,19 @@
 	    console.log("time to combine!");
 	    let biggerPiece = this.combine(clickedCellNo, adjacentPositions); //combine them
 
-	    // $cell.html(newPiece); //render the new piece
+	    if(biggerPiece.value === 5) {
+	      console.log("YOU WIN!!!!!!!! YAAAAAYYYYYYY");
+	      this.won = true;
+	    }
+
 	    adjacentPositions = this.adjacentMatchingPositions(cellPos, biggerPiece.value); //check that that doesn't need to be combined
 	  }
-	  // debugger
-	    // console.log(this.board.isFull());
-	    if(this.board.isFull()) {
-	      console.log("IT'S OVER. STOP PLAYING");
-	    } else {
-	      this.currentPiece = this.giveCurrentPiece();
-	    }
+
+	  if(this.board.isFull()) {
+	    console.log("IT'S OVER. STOP PLAYING");
+	  } else {
+	    this.currentPiece = this.giveCurrentPiece();
+	  }
 	};
 
 	Game.prototype.isOver = function () {
@@ -353,7 +364,7 @@
 	  let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 
 	  for(let i = 0; i < numPieces; i++) {
-	    let randomType = ImgConstants[Math.floor(Math.random() * (24 - 1) + 1)];
+	    let randomType = ImgConstants[Math.floor(Math.random() * (25 - 1) + 1)];
 	    let randomCellNo = Math.floor(Math.random() * 25);
 
 	    // make sure cell is empty else do it again
@@ -372,6 +383,7 @@
 	    }
 
 	    let adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], ImgValueConstants[randomType] );
+	    // debugger
 	    while(adjacentPositions.length >= 2) {
 	      console.log("oops! close call. we need to combine! or..."); //ether pick a diff cell here or actually combine...
 	      randomCellNo = Math.floor(Math.random() * 25);
@@ -446,9 +458,9 @@
 	  "hut": 3,
 	  "house": 4,
 	  "mansion": 5,
-	  "castle": 6,
-	  "floating_castle": 7,
-	  "aa": 8,
+	  "aa": 6,
+	  // "floating_castle": 7,
+	  // "aa": 8,
 
 	  0 : "<img src=\"./images/grass.png\" >",
 	  1 : "<img src=\"./images/bush.png\" >",
@@ -456,9 +468,9 @@
 	  3 : "<img src=\"./images/hut.png\" >",
 	  4 : "<img src=\"./images/house.png\" >",
 	  5 : "<img src=\"./images/mansion.png\" >",
-	  6 : "<img src=\"./images/castle.png\" >",
-	  7 : "<img src='./images/floating_castle.png' >",
-	  8 : "<img src='./images/aa.png' >"
+	  6 : "<img src=\"./images/aa.png\" >",
+	  // 7 : "<img src='./images/floating_castle.png' >",
+	  // 8 : "<img src='./images/aa.png' >"
 	};
 
 	module.exports = ImgValueConstants;

@@ -13,6 +13,8 @@ function Game() {
   this.adjacentBottom = [];
   this.adjacentLeft = [];
   this.adjacentRight = [];
+
+  this.won = false;
 }
 
 Game.prototype.playMove = function (clickedCellNo) {
@@ -26,16 +28,19 @@ Game.prototype.playMove = function (clickedCellNo) {
     console.log("time to combine!");
     let biggerPiece = this.combine(clickedCellNo, adjacentPositions); //combine them
 
-    // $cell.html(newPiece); //render the new piece
+    if(biggerPiece.value === 5) {
+      console.log("YOU WIN!!!!!!!! YAAAAAYYYYYYY");
+      this.won = true;
+    }
+
     adjacentPositions = this.adjacentMatchingPositions(cellPos, biggerPiece.value); //check that that doesn't need to be combined
   }
-  // debugger
-    // console.log(this.board.isFull());
-    if(this.board.isFull()) {
-      console.log("IT'S OVER. STOP PLAYING");
-    } else {
-      this.currentPiece = this.giveCurrentPiece();
-    }
+
+  if(this.board.isFull()) {
+    console.log("IT'S OVER. STOP PLAYING");
+  } else {
+    this.currentPiece = this.giveCurrentPiece();
+  }
 };
 
 Game.prototype.isOver = function () {
@@ -179,7 +184,7 @@ Game.prototype.generateInitialSetup = function () {
   let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 
   for(let i = 0; i < numPieces; i++) {
-    let randomType = ImgConstants[Math.floor(Math.random() * (24 - 1) + 1)];
+    let randomType = ImgConstants[Math.floor(Math.random() * (25 - 1) + 1)];
     let randomCellNo = Math.floor(Math.random() * 25);
 
     // make sure cell is empty else do it again
@@ -198,6 +203,7 @@ Game.prototype.generateInitialSetup = function () {
     }
 
     let adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], ImgValueConstants[randomType] );
+    // debugger
     while(adjacentPositions.length >= 2) {
       console.log("oops! close call. we need to combine! or..."); //ether pick a diff cell here or actually combine...
       randomCellNo = Math.floor(Math.random() * 25);

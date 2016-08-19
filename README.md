@@ -56,13 +56,18 @@ play.js
 **fix initial render(make sure nothing can be combined)
 ...also now after adjacent cells are checked, already taken cells are not checked
 
-
 after combines, has to check adjacent again
 
 refactor adjacentSamePieces to use recursion
 
---add a box with directions
 --add directions on hover
 --add movement
 
 -add preview on hover
+
+-change background if piece exists?
+
+
+
+--add a box with directions
+-points?

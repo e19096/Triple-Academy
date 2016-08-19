@@ -1,5 +1,5 @@
 html {
-  background-color: #4f7f49;
+  background-color: #57924f;
   /*background-image: */
 }
 
@@ -15,6 +15,12 @@ h1 {
   color: white;
   font-weight: normal;
   letter-spacing: 1px;
+  text-shadow: 1px 1px 5px black;
+}
+
+img {
+  width: 55px;
+  height: 55px;
 }
 
 .ta {
@@ -30,19 +36,21 @@ h1 {
 .ta ul {
   margin: auto;
   list-style: none;
-  width: 260px;
-  height: 260px;
-  border: 2px solid #53ad53;
+  width: 285px;
+  height: 285px;
+  border: 10px solid #53ad53;
   border-radius: 5px;
+  border-style: outset;
   background-color: #76c176;
 }
 
 .ta li {
   float: left;
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
   border: 1px solid #76c176;
   background: transparent;
+  border-radius: 5px;
 }
 
 .ta li:hover {
@@ -58,11 +66,13 @@ h1 {
   border-radius: 10px;
 }
 
-.ta li img {
+.ta img {
   /*transition-delay: 1s;*/
+  transition: all .2s ease-in-out;
 }
 
 .ta .bounce-up img {
+  transition: all .2s ease-in-out;
   animation-name: bounceUp;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
@@ -111,61 +121,104 @@ h1 {
 }
 
 @keyframes bounceUp {
-  100%{
-    transform:translateY(-10%);
+  50%{
+    transform:translateY(-13%);
   }
+  /*50%{
+    transform:translateY(0);
+  }*/
 }
 
 @keyframes bounceDown {
-  100%{
-    transform:translateY(10%);
+  50%{
+    transform:translateY(13%);
   }
+  /*50%{
+    transform:translateY(0);
+  }*/
 }
 
 @keyframes bounceLeft {
-  100%{
-    transform:translateX(-10%);
+  50%{
+    transform:translateX(-13%);
   }
+  /*50%{
+    transform:translateX(0);
+  }*/
 }
 
 @keyframes bounceRight {
-  100%{
-    transform:translateX(10%);
+  50%{
+    transform:translateX(13%);
   }
+  /*50%{
+    transform:translateX(0);
+  }*/
 }
 
 @keyframes bounceUpRight {
-  100%{
-    transform:translate(10%, -10%);
+  50%{
+    transform:translate(13%, -13%);
   }
+  /*50%{
+    transform:translate(0, 0);
+  }*/
 }
 
 @keyframes bounceDownRight {
-  100%{
-    transform:translate(10%, 10%);
+  50%{
+    transform:translate(13%, 13%);
   }
+  /*50%{
+    transform:translate(0, 0);
+  }*/
 }
 
 @keyframes bounceUpLeft {
-  100%{
-    transform:translate(-10%, -10%);
+  50%{
+    transform:translate(-13%, -13%);
   }
+  /*50%{
+    transform:translate(0, 0);
+  }*/
 }
 
 @keyframes bounceDownLeft {
-  100%{
-    transform:translate(-10%, 10%);
+  50%{
+    transform:translate(-13%, 13%);
   }
+  /*50%{
+    transform:translate(0, 0);
+  }*/
+}
+
+@keyframes zoom {
+  50%{
+    transform: scale(1.2);
+  }
+  /*50%{
+    transform: scale(0.9);
+  }*/
+}
+
+.zoom {
+  transition: all .2s ease-in-out;
+}
+
+.zoom:hover {
+  animation-name: zoom;
+  animation-duration: 0.55s;
+  animation-iteration-count: infinite;
 }
 
 .ta .current-piece {
   /*position: absolute;*/
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
   border: 2px solid darkgray;
   border-radius: 50px;
   /*margin-left: 34%;*/
-  margin-top: 5px;;
+  margin-top: 5px;
   background-color: #76c176;
   display: inline-block;
 }
@@ -175,7 +228,7 @@ h1 {
   transition: 1s;
 }
 
-.game-over li:hover {
+.game-over li:hover, .game-won li:hover {
   cursor: none;
 }
 
@@ -183,6 +236,11 @@ h1 {
   position: absolute;
   text-align: center;
   display: inline;
-  width: 200px;
   color: red;
+}
+
+.game-won img {
+  animation-name: bounceUp;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
 }

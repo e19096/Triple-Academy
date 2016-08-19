@@ -14,6 +14,8 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
     function(event){
       if($(event.currentTarget).html() === ""){
 
+        $(event.currentTarget).addClass("zoom");
+
         $(event.currentTarget).html(that.game.currentPiece.imgTag);
         currentImg = undefined;
 
@@ -53,7 +55,7 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
       this.makeMove($(event.currentTarget));
       // $(event.currentTarget).addClass("has-piece");
     }
-    $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left");
+    $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left zoom");
   });
 };
 
@@ -68,7 +70,11 @@ View.prototype.makeMove = function ($cell) {
   //also render new current piece
   $(`.current-piece`).html(this.game.currentPiece.imgTag);
 
-  if(this.game.isOver()) {
+  if(this.game.won) {
+    this.$el.addClass("game-won");
+    console.log("you did it, really. good work.");
+    $(".cell").html(ImgValueConstants[6]);
+  } else if(this.game.isOver()) {
     this.$el.addClass("game-over");
     this.$el.append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
     console.log("it's over. seriously.");
