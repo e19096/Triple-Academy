@@ -17,7 +17,15 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
 
 View.prototype.makeMove = function ($cell) {
   //call game's play move?
-  this.game.playMove($cell);
+  this.game.playMove(parseInt(($cell).attr("data-number")));
+  //render new board
+  let that = this;
+  this.game.changed.forEach(function(changedCellNo) {
+    $(`.cell[data-number=${changedCellNo}]`).html(that.game.board.grid[Math.floor(changedCellNo / 5)][changedCellNo % 5].imgTag ? that.game.board.grid[Math.floor(changedCellNo / 5)][changedCellNo % 5].imgTag : "");
+    // debugger
+  });
+  //also render new current piece
+  $(`.current-piece`).html(this.game.currentPiece.imgTag);
 };
 
 View.prototype.setupBoard = function () {
@@ -32,32 +40,14 @@ View.prototype.setupBoard = function () {
 
   this.$el.append(grid); //set up the grid for the pieces to be places
 
+  this.game.generateInitialSetup();
+  this.game.pieces.forEach(function (piece) {
+    $(`.cell[data-number=${piece.cellNo}]`).html(piece.imgTag);
+  });
+
   //make a separate place to hold to current piece to be placed
   this.$el.append($("<div>").addClass("current-piece"));
-
-  //place random pieces (from: grass, bush, tree, hut) in random cells
-  //- some number of pieces between 5-7
-  let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
-
-  for(let i = 0; i < numPieces; i++) {
-    let randomPiece = `${ImgConstants[Math.floor(Math.random() * (18 - 1) + 1)]}`;
-    let randomCellNo = Math.floor(Math.random() * 25);
-
-    // make sure cell is empty else do it again
-    // and also make sure this piece is not adjacent to 2+ of the same piece
-    while(($(`.cell[data-number=${randomCellNo}]`).html())) {
-      console.log("oops! there's already something there!");
-      randomCellNo = Math.floor(Math.random() * 25);
-    }
-
-    while((this.game.adjacentSamePieces($(`.cell[data-number=${randomCellNo}]`).html(randomPiece))).length >= 2) {
-      console.log("oops! pick a different cell! (would need to combine)");
-      $(`.cell[data-number=${randomCellNo}]`).html("");
-      randomCellNo = Math.floor(Math.random() * 25);
-    }
-
-    $(`.cell[data-number=${randomCellNo}]`).html(randomPiece);
-  }
+  $(`.current-piece`).html(this.game.currentPiece.imgTag);
 };
 
 module.exports = View;
