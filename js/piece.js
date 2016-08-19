@@ -1,11 +1,11 @@
 const ImgValueConstants = require('./img_value_constants');
 
-const Piece = function (type, cellNo) {
+const Piece = function (type, cellPos) {
   this.type = type;
-  this.cellNo = cellNo;
+  this.pos = cellPos; //[row, col]
+  this.cellNo = cellPos[0] * 5 + cellPos[1];
   this.value = ImgValueConstants[type];
   this.imgTag = ImgValueConstants[this.value];
-  this.pos = [Math.floor(cellNo / 5), cellNo % 5]; //[row, col]
   // debugger
 };
 
@@ -13,8 +13,8 @@ const Piece = function (type, cellNo) {
 //   return this.imgTag; //or call this getImg()
 // };
 
-Piece.prototype.combine = function () {
-
-};
+// Piece.prototype.combine = function () {
+//
+// };
 
 module.exports = Piece;

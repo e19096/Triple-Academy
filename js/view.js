@@ -61,11 +61,14 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
 
 View.prototype.makeMove = function ($cell) {
   //call game's play move?
-  this.game.playMove(parseInt(($cell).attr("data-number")));
+  let cellNo = parseInt(($cell).attr("data-number"));
+  let cellPos = [Math.floor(cellNo / 5), cellNo % 5];
+  this.game.playMove(cellPos);
   //render new board
   let that = this;
-  this.game.changed.forEach(function(changedCellNo) {
-    $(`.cell[data-number=${changedCellNo}]`).html(that.game.board.grid[Math.floor(changedCellNo / 5)][changedCellNo % 5].imgTag ? that.game.board.grid[Math.floor(changedCellNo / 5)][changedCellNo % 5].imgTag : "");
+  this.game.changed.forEach(function(changedPos) {
+    let changedCellNo = changedPos[0] * 5 + changedPos[1];
+    $(`.cell[data-number=${changedCellNo}]`).html(that.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? that.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
   });
   //also render new current piece
   $(`.current-piece`).html(this.game.currentPiece.imgTag);

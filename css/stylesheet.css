@@ -233,10 +233,11 @@ img {
 }
 
 .game-over-message {
+  margin-top: 0;
   position: absolute;
   text-align: center;
-  display: inline;
-  color: red;
+  display: inline-block;
+  color: pink;
 }
 
 .game-won img {
