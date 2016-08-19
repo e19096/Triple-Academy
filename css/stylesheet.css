@@ -49,3 +49,19 @@ h1 {
   border: 2px solid lightgray;
   margin-left: 34%;
 }
+
+.game-over ul, .game-over li, .game-over div {
+  opacity: 0.6;
+  transition: 1s;
+}
+
+.game-over li:hover {
+  cursor: none;
+}
+
+.game-over-message {
+  position: absolute;
+  text-align: center;
+  display: inline;
+  width: 200px;
+}

@@ -26,6 +26,12 @@ View.prototype.makeMove = function ($cell) {
   });
   //also render new current piece
   $(`.current-piece`).html(this.game.currentPiece.imgTag);
+
+  if(this.game.isOver()) {
+    this.$el.addClass("game-over");
+    this.$el.append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
+    console.log("it's over. seriously.");
+  }
 };
 
 View.prototype.setupBoard = function () {

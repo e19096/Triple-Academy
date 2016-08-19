@@ -11,26 +11,30 @@ function Game() {
 }
 
 Game.prototype.playMove = function (clickedCellNo) {
-  if(this.board.isFull()){
-    console.log("oh no! you let the board get full!");
-  } else {
-    this.changed = [clickedCellNo];
+  this.changed = [clickedCellNo];
 
-    let cellPos = [Math.floor(clickedCellNo / 5), clickedCellNo % 5];
-    this.board.grid[cellPos[0]][cellPos[1]] = this.currentPiece;
+  let cellPos = [Math.floor(clickedCellNo / 5), clickedCellNo % 5];
+  this.board.grid[cellPos[0]][cellPos[1]] = this.currentPiece;
 
-    let adjacentPositions = this.adjacentMatchingPositions(cellPos);
-    while(adjacentPositions.length >= 2) {
-      console.log("time to combine!");
-      let biggerPiece = this.combine(clickedCellNo, adjacentPositions); //combine them
+  let adjacentPositions = this.adjacentMatchingPositions(cellPos);
+  while(adjacentPositions.length >= 2) {
+    console.log("time to combine!");
+    let biggerPiece = this.combine(clickedCellNo, adjacentPositions); //combine them
 
-      // $cell.html(newPiece); //render the new piece
-      adjacentPositions = this.adjacentMatchingPositions(cellPos, biggerPiece.type); //check that that doesn't need to be combined
-    }
+    // $cell.html(newPiece); //render the new piece
+    adjacentPositions = this.adjacentMatchingPositions(cellPos, biggerPiece.type); //check that that doesn't need to be combined
+  }
   // debugger
     // console.log(this.board.isFull());
-    this.currentPiece = this.giveCurrentPiece();
-  }
+    if(this.board.isFull()) {
+      console.log("IT'S OVER. STOP PLAYING");
+    } else {
+      this.currentPiece = this.giveCurrentPiece();
+    }
+};
+
+Game.prototype.isOver = function () {
+  return this.board.isFull();
 };
 
 Game.prototype.adjacentMatchingPositions = function (gridPos, pieceType) {
