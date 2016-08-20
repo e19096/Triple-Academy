@@ -24,7 +24,6 @@ p {
 
 h1 {
   margin-bottom: 20px;
-  /*font-family: sans-serif;*/
   font-family: 'Baloo Da', sans-serif;
   color: white;
   font-weight: normal;
@@ -33,8 +32,8 @@ h1 {
 }
 
 .ta img {
-  width: 55px;
-  height: 55px;
+  width: 58px;
+  height: 58px;
 }
 
 .ta {
@@ -53,7 +52,6 @@ h1 {
 }
 
 .ta ul {
-  /*margin: auto;*/
   float: left;
   list-style: none;
   width: 285px;
@@ -78,9 +76,6 @@ h1 {
 .ta li:hover {
   cursor: pointer;
   opacity: 0.8;
-  /*transition: 1s;*/
-  /*border: 1px solid darkgreen;*/
-  /*border-radius: 5px;*/
 }
 
 .ta .has-piece {
@@ -141,81 +136,54 @@ h1 {
   50%{
     transform:translateY(-18%);
   }
-  /*50%{
-    transform:translateY(0);
-  }*/
 }
 
 @keyframes bounceDown {
   50%{
     transform:translateY(18%);
   }
-  /*50%{
-    transform:translateY(0);
-  }*/
 }
 
 @keyframes bounceLeft {
   50%{
     transform:translateX(-18%);
   }
-  /*50%{
-    transform:translateX(0);
-  }*/
 }
 
 @keyframes bounceRight {
   50%{
     transform:translateX(18%);
   }
-  /*50%{
-    transform:translateX(0);
-  }*/
 }
 
 @keyframes bounceUpRight {
   50%{
     transform:translate(20%, -20%);
   }
-  /*50%{
-    transform:translate(0, 0);
-  }*/
 }
 
 @keyframes bounceDownRight {
   50%{
     transform:translate(20%, 20%);
   }
-  /*50%{
-    transform:translate(0, 0);
-  }*/
 }
 
 @keyframes bounceUpLeft {
   50%{
     transform:translate(-20%, -20%);
   }
-  /*50%{
-    transform:translate(0, 0);
-  }*/
 }
 
 @keyframes bounceDownLeft {
   50%{
     transform:translate(-20%, 20%);
   }
-  /*50%{
-    transform:translate(0, 0);
-  }*/
 }
 
 @keyframes zoom {
   50%{
     transform: scale(1.2);
   }
-  /*50%{
-    transform: scale(0.9);
-  }*/
 }
 
 .zoom {
@@ -229,7 +197,6 @@ h1 {
 }
 
 .ta .current-piece {
-  /*position: absolute;*/
   width: 60px;
   height: 85px;
   border: 3px solid gray;
@@ -253,15 +220,11 @@ h1 {
 }
 
 .game-over-message {
-  /*margin-top: 0;*/
-  /*position: absolute;*/
-  /*text-align: center;*/
-  /*display: inline;*/
   color: pink;
-  z-index: 10;
   font-size: 75px;
   font-family: 'Baloo Da', sans-serif;
   opacity: none;
+  padding: 0;
 }
 
 .game-won img, .game-won h1, .game-won p {
@@ -272,7 +235,6 @@ h1 {
 
 .ta .instructions {
   position: absolute;
-  /*background-color: black;*/
   height: 40px;
   width: 265px;
   margin-top: 230px;
@@ -281,6 +243,7 @@ h1 {
   text-align: center;
   font-size: 13px;
   vertical-align: center;
+  font-family: "Baloo Da", sans-serif;
   color: darkgray;
 }
 
@@ -289,6 +252,8 @@ h1 {
   height: inherit;
   /*background-color: black;*/
   transition: 1s;
+  font-size: 16px;
+  letter-spacing: 0.5px;
 }
 
 .instructions > div > img {
