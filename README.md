@@ -60,14 +60,16 @@ after combines, has to check adjacent again
 
 refactor adjacentSamePieces to use recursion
 
---add directions on hover
 --add movement
 
 -add preview on hover
 
 -change background if piece exists?
 
-
-
 --add a box with directions
 -points?
+
+--add crystal?
+
+--add directions for specific piece on hover
+(add to constants and add as $(.instructions).html when hovering over matching piece.)

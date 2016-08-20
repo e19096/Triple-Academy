@@ -2,6 +2,7 @@ const ImgConstants = require('./img_constants');
 const ImgValueConstants = require('./img_value_constants');
 const Board = require('./board');
 const Piece = require('./piece');
+const Bear = require('./bear');
 
 function Game() {
   this.board = new Board();
@@ -15,20 +16,23 @@ function Game() {
   this.adjacentRight = [];
 
   this.won = false;
+
+  this.bears = [];
 }
 
 Game.prototype.playMove = function (clickedCellPos) {
   this.changed = [clickedCellPos];
 
   // let cellPos = [Math.floor(clickedCellNo / 5), clickedCellNo % 5];
-  this.board.grid[clickedCellPos[0]][clickedCellPos[1]] = this.currentPiece;
+  // this.board.grid[clickedCellPos[0]][clickedCellPos[1]] = this.currentPiece;
+  this.updatePos(clickedCellPos, this.currentPiece);
 
   let adjacentPositions = this.adjacentMatchingPositions(clickedCellPos);
   while(adjacentPositions.length >= 2) {
     console.log("time to combine!");
     let biggerPiece = this.combine(clickedCellPos, adjacentPositions); //combine them
 
-    if(biggerPiece.value === 5) {
+    if(biggerPiece.value === 6) {
       console.log("YOU WIN!!!!!!!! YAAAAAYYYYYYY");
       this.won = true;
     }
@@ -36,15 +40,34 @@ Game.prototype.playMove = function (clickedCellPos) {
     adjacentPositions = this.adjacentMatchingPositions(clickedCellPos, biggerPiece.value); //check that that doesn't need to be combined
   }
 
-  if(this.board.isFull()) {
+  if(this.isOver()) {
     console.log("IT'S OVER. STOP PLAYING");
   } else {
     this.currentPiece = this.giveCurrentPiece();
   }
 };
 
+Game.prototype.updatePos = function (pos, piece) {
+  this.board.grid[pos[0]][pos[1]] = piece;
+  piece.pos = pos;
+};
+
 Game.prototype.isOver = function () {
   return this.board.isFull();
+};
+
+Game.prototype.getAdjacentEmptys = function (pos) {
+  let row = pos[0];
+  let col = pos[1];
+
+  let emptys = [];
+
+  let topPos = [row - 1, col];
+  let bottomPos = [row + 1, col];
+  let leftPos = [row, col - 1];
+  let rightPos = [row, col + 1];
+
+
 };
 
 Game.prototype.adjacentMatchingPositions = function (gridPos, pieceValue) {
@@ -172,13 +195,17 @@ Game.prototype.combine = function (cellPos, adjacentPositions) {
 };
 
 Game.prototype.giveCurrentPiece = function () {
-  //pick random piece (from: grass, bush, tree)
-  let randomType = ImgConstants[Math.floor(Math.random() * (34 - 1) + 1)];
+  //pick random piece (from: grass, bush, tree, hut, bear)
+  let randomType = ImgConstants[Math.floor(Math.random() * (33 - 1) + 1)];
 
   let randomCellNo = Math.floor(Math.random() * 25);
   let pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
 
-  return new Piece(randomType, pos);
+  if(randomType === "bear") {
+    return new Bear(pos);
+  } else {
+    return new Piece(randomType, pos);
+  }
 };
 
 Game.prototype.generateInitialSetup = function () {

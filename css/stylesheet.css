@@ -11,7 +11,8 @@ h1, figure, ul, li {
 
 h1 {
   margin-bottom: 20px;
-  font-family: sans-serif;
+  /*font-family: sans-serif;*/
+  font-family: 'Baloo Da', sans-serif;
   color: white;
   font-weight: normal;
   letter-spacing: 1px;
@@ -38,10 +39,10 @@ img {
   list-style: none;
   width: 285px;
   height: 285px;
-  border: 10px solid #53ad53;
+  border: 10px solid #a5918b;
   border-radius: 5px;
   border-style: outset;
-  background-color: #76c176;
+  background-color: #83b383;
 }
 
 .ta li {
@@ -55,7 +56,7 @@ img {
 
 .ta li:hover {
   cursor: pointer;
-  opacity: 0.65;
+  opacity: 0.85;
   /*transition: 1s;*/
   /*border: 1px solid darkgreen;*/
   /*border-radius: 5px;*/
@@ -219,7 +220,7 @@ img {
   border-radius: 50px;
   /*margin-left: 34%;*/
   margin-top: 5px;
-  background-color: #76c176;
+  background-color: #83b383;
   display: inline-block;
 }
 
@@ -236,12 +237,17 @@ img {
   margin-top: 0;
   position: absolute;
   text-align: center;
-  display: inline-block;
+  /*display: inline-block;*/
   color: pink;
+  z-index: 10;
 }
 
 .game-won img {
   animation-name: bounceUp;
   animation-duration: 0.5s;
   animation-iteration-count: infinite;
+}
+
+.ta .instructions {
+  position: absolute;
 }

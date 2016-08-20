@@ -144,7 +144,7 @@
 	  if(this.game.won) {
 	    this.$el.addClass("game-won");
 	    console.log("you did it, really. good work.");
-	    $(".cell").html(ImgValueConstants[6]);
+	    $(".cell").html(ImgValueConstants[7]);
 	  } else if(this.game.isOver()) {
 	    this.$el.addClass("game-over");
 	    this.$el.append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
@@ -166,12 +166,14 @@
 
 	  this.game.generateInitialSetup();
 	  this.game.pieces.forEach(function (piece) {
-	    $(`.cell[data-number=${piece.cellNo}]`).html(piece.imgTag);
+	    $(`.cell[data-number=${piece.getCellNo()}]`).html(piece.imgTag);
 	  });
 
 	  //make a separate place to hold to current piece to be placed
 	  this.$el.append($("<div>").addClass("current-piece"));
 	  $(`.current-piece`).html(this.game.currentPiece.imgTag);
+
+	  this.$el.append($("<div>").addClass("instructions"));
 	};
 
 	module.exports = View;
@@ -185,6 +187,7 @@
 	const ImgValueConstants = __webpack_require__(4);
 	const Board = __webpack_require__(5);
 	const Piece = __webpack_require__(6);
+	const Bear = __webpack_require__(7);
 
 	function Game() {
 	  this.board = new Board();
@@ -198,20 +201,23 @@
 	  this.adjacentRight = [];
 
 	  this.won = false;
+
+	  this.bears = [];
 	}
 
 	Game.prototype.playMove = function (clickedCellPos) {
 	  this.changed = [clickedCellPos];
 
 	  // let cellPos = [Math.floor(clickedCellNo / 5), clickedCellNo % 5];
-	  this.board.grid[clickedCellPos[0]][clickedCellPos[1]] = this.currentPiece;
+	  // this.board.grid[clickedCellPos[0]][clickedCellPos[1]] = this.currentPiece;
+	  this.updatePos(clickedCellPos, this.currentPiece);
 
 	  let adjacentPositions = this.adjacentMatchingPositions(clickedCellPos);
 	  while(adjacentPositions.length >= 2) {
 	    console.log("time to combine!");
 	    let biggerPiece = this.combine(clickedCellPos, adjacentPositions); //combine them
 
-	    if(biggerPiece.value === 5) {
+	    if(biggerPiece.value === 6) {
 	      console.log("YOU WIN!!!!!!!! YAAAAAYYYYYYY");
 	      this.won = true;
 	    }
@@ -219,15 +225,34 @@
 	    adjacentPositions = this.adjacentMatchingPositions(clickedCellPos, biggerPiece.value); //check that that doesn't need to be combined
 	  }
 
-	  if(this.board.isFull()) {
+	  if(this.isOver()) {
 	    console.log("IT'S OVER. STOP PLAYING");
 	  } else {
 	    this.currentPiece = this.giveCurrentPiece();
 	  }
 	};
 
+	Game.prototype.updatePos = function (pos, piece) {
+	  this.board.grid[pos[0]][pos[1]] = piece;
+	  piece.pos = pos;
+	};
+
 	Game.prototype.isOver = function () {
 	  return this.board.isFull();
+	};
+
+	Game.prototype.getAdjacentEmptys = function (pos) {
+	  let row = pos[0];
+	  let col = pos[1];
+
+	  let emptys = [];
+
+	  let topPos = [row - 1, col];
+	  let bottomPos = [row + 1, col];
+	  let leftPos = [row, col - 1];
+	  let rightPos = [row, col + 1];
+
+
 	};
 
 	Game.prototype.adjacentMatchingPositions = function (gridPos, pieceValue) {
@@ -355,13 +380,17 @@
 	};
 
 	Game.prototype.giveCurrentPiece = function () {
-	  //pick random piece (from: grass, bush, tree)
-	  let randomType = ImgConstants[Math.floor(Math.random() * (34 - 1) + 1)];
+	  //pick random piece (from: grass, bush, tree, hut, bear)
+	  let randomType = ImgConstants[Math.floor(Math.random() * (33 - 1) + 1)];
 
 	  let randomCellNo = Math.floor(Math.random() * 25);
 	  let pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
 
-	  return new Piece(randomType, pos);
+	  if(randomType === "bear") {
+	    return new Bear(pos);
+	  } else {
+	    return new Piece(randomType, pos);
+	  }
 	};
 
 	Game.prototype.generateInitialSetup = function () {
@@ -550,11 +579,18 @@
 
 	const Piece = function (type, cellPos) {
 	  this.type = type;
+
 	  this.pos = cellPos; //[row, col]
-	  this.cellNo = cellPos[0] * 5 + cellPos[1];
+	  // this.cellNo = cellPos[0] * 5 + cellPos[1];
+
 	  this.value = ImgValueConstants[type];
+
 	  this.imgTag = ImgValueConstants[this.value];
 	  // debugger
+	};
+
+	Piece.prototype.getCellNo = function () {
+	  return this.pos[0] * 5 + this.pos[1];
 	};
 
 	// Piece.prototype.render = function () {
@@ -566,6 +602,58 @@
 	// };
 
 	module.exports = Piece;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const Piece = __webpack_require__(6);
+	const Util = __webpack_require__(8);
+
+	const Bear = function (cellPos) {
+	  Piece.call(this, "bear", cellPos);
+	};
+
+	Util.inherits(Bear, Piece);
+
+	Bear.prototype.walk = function (adjacentEmptyPositions) {
+	  //find adjacent empty spaces... or get them from game?
+	  //pic a random one to walk to
+	  let n = Math.floor(Math.random() * (adjacentEmptyPositions.length));
+	  //update bear's pos and cell No
+	  this.pos = adjacentEmptyPositions[n];
+	  //update grid or re turn new pos so game can update grid
+	  return this.pos;
+	};
+
+	module.exports = Bear;
+
+
+
+	//CLICK A CELL
+
+	//check if this.currentPiece is a bear
+	if(this.currentPiece instanceof Bear) {
+	  //find adjacent empty positions and call Bear.walk
+	  let adjacentEmptys = this.getAdjacentEmptys();
+
+	}
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	const Util = {
+	  inherits (ChildClass, BaseClass) {
+	    function Surrogate () { this.constructor = ChildClass; }
+	    Surrogate.prototype = BaseClass.prototype;
+	    ChildClass.prototype = new Surrogate();
+	  }
+	};
+
+	module.exports = Util;
 
 
 /***/ }

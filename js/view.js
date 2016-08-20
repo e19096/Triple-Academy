@@ -76,7 +76,7 @@ View.prototype.makeMove = function ($cell) {
   if(this.game.won) {
     this.$el.addClass("game-won");
     console.log("you did it, really. good work.");
-    $(".cell").html(ImgValueConstants[6]);
+    $(".cell").html(ImgValueConstants[7]);
   } else if(this.game.isOver()) {
     this.$el.addClass("game-over");
     this.$el.append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
@@ -98,12 +98,14 @@ View.prototype.setupBoard = function () {
 
   this.game.generateInitialSetup();
   this.game.pieces.forEach(function (piece) {
-    $(`.cell[data-number=${piece.cellNo}]`).html(piece.imgTag);
+    $(`.cell[data-number=${piece.getCellNo()}]`).html(piece.imgTag);
   });
 
   //make a separate place to hold to current piece to be placed
   this.$el.append($("<div>").addClass("current-piece"));
   $(`.current-piece`).html(this.game.currentPiece.imgTag);
+
+  this.$el.append($("<div>").addClass("instructions"));
 };
 
 module.exports = View;
