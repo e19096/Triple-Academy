@@ -1,5 +1,6 @@
 const ImgConstants = require('./img_constants');
 const ImgValueConstants = require('./img_value_constants');
+const InstructionConstants = require('./instruction_constants');
 
 const View = function (game, $el) {
   this.game = game;
@@ -39,13 +40,16 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
           });
           adjacents = that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
         }
-      } else {
+      } else { //there is already an image there
         currentImg = $(event.currentTarget).html();
+        //display the instructions for this piece from instruction constants
+        $(".instructions").html(InstructionConstants[currentImg.slice(19, -7)]);
       }
     },
     function(event){
       $(event.currentTarget).html(currentImg ? currentImg : "");
       $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left");
+      $(".instructions").html("<br>Hover over an object for instructions!");
     }
   );
 
@@ -59,7 +63,13 @@ View.prototype.bindEvents = function () { //when cell is clicked, check if empty
   });
 };
 
+View.prototype.unbindClick = function () {
+  $(".cell").off("click");
+};
+
 View.prototype.makeMove = function ($cell) {
+  // console.log(this.game.board.grid);
+  // debugger
   //call game's play move?
   let cellNo = parseInt(($cell).attr("data-number"));
   let cellPos = [Math.floor(cellNo / 5), cellNo % 5];
@@ -71,20 +81,26 @@ View.prototype.makeMove = function ($cell) {
     $(`.cell[data-number=${changedCellNo}]`).html(that.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? that.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
   });
   //also render new current piece
-  $(`.current-piece`).html(this.game.currentPiece.imgTag);
+  $(`.current-piece`).html("next:" + this.game.currentPiece.imgTag);
 
   if(this.game.won) {
+    this.unbindClick();
     this.$el.addClass("game-won");
     console.log("you did it, really. good work.");
     $(".cell").html(ImgValueConstants[7]);
+    $(".current-piece").html("<p>EXPECTED BEHAVIOR!!!</p>");
+
   } else if(this.game.isOver()) {
+    this.unbindClick();
     this.$el.addClass("game-over");
-    this.$el.append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
+    $(".container").append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
     console.log("it's over. seriously.");
   }
 };
 
 View.prototype.setupBoard = function () {
+  const $container = $("<div>").addClass("container");
+
   const grid = $("<ul>").addClass("grid").addClass("group");
 
   for(let i = 0; i < 25; i++) {
@@ -94,7 +110,8 @@ View.prototype.setupBoard = function () {
     grid.append($cell);
   }
 
-  this.$el.append(grid); //set up the grid for the pieces to be places
+  this.$el.append($container);
+  $container.append(grid); //set up the grid for the pieces to be places
 
   this.game.generateInitialSetup();
   this.game.pieces.forEach(function (piece) {
@@ -102,10 +119,11 @@ View.prototype.setupBoard = function () {
   });
 
   //make a separate place to hold to current piece to be placed
-  this.$el.append($("<div>").addClass("current-piece"));
-  $(`.current-piece`).html(this.game.currentPiece.imgTag);
+  $container.append($("<div>").addClass("current-piece"));
+  $(`.current-piece`).html("next:" + this.game.currentPiece.imgTag);
 
-  this.$el.append($("<div>").addClass("instructions"));
+  $container.append($("<div>").addClass("instructions"));
+  $(".instructions").html("<br>Hover over an object for instructions!");
 };
 
 module.exports = View;

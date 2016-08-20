@@ -4,13 +4,14 @@ const Game = require('./game');
 const Piece = require('./piece');
 
 $( () => {
-  const rootEl = $('.ta');
+  const $rootEl = $('.ta');
+
+  // $playButton = $("<button>").addClass("play-button").html("Start!");
+  // $rootEl.append($playButton);
+
+
   const game = new Game();
-  const view = new View(game, rootEl);
+  const view = new View(game, $rootEl);
   view.setupBoard();
   view.bindEvents();
-
-
-  game.giveCurrentPiece();
-  // game.board.makeGrid();
 });

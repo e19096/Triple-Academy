@@ -1,4 +1,4 @@
-ImgValueConstants = {
+const ImgValueConstants = {
   // "<img src=\"./images/grass.png\" >": 0,
   // "<img src=\"./images/bush.png\" >": 1,
   // "<img src=\"./images/tree.png\" >": 2,
@@ -15,18 +15,18 @@ ImgValueConstants = {
   "house"   : 5,
   "mansion" : 6,
   "aa"      : 7,
-  // "floating_castle": 8,
+  // "floatingcastle": 8,
   // "aa": 9,
 
-  0 : "<img src=\"./images/bear.png\" >",
-  1 : "<img src=\"./images/grass.png\" >",
-  2 : "<img src=\"./images/bush.png\" >",
-  3 : "<img src=\"./images/tree.png\" >",
-  4 : "<img src=\"./images/hut.png\" >",
-  5 : "<img src=\"./images/house.png\" >",
-  6 : "<img src=\"./images/mansion.png\" >",
-  7 : "<img src=\"./images/aa.png\" >"
-  // 8 : "<img src='./images/floating_castle.png' >",
+  0 : "<img src=\"./images/bear2.png\" >",
+  1 : "<img src=\"./images/grass2.png\" >",
+  2 : "<img src=\"./images/bush2.png\" >",
+  3 : "<img src=\"./images/tree2.png\" >",
+  4 : "<img src=\"./images/hut2.png\" >",
+  5 : "<img src=\"./images/house2.png\" >",
+  6 : "<img src=\"./images/mansion2.png\" >",
+  7 : "<img src=\"./images/aa2.png\" >"
+  // 8 : "<img src='./images/floatingcastle2.png' >",
   // 9 : "<img src='./images/aa.png' >"
 };
 

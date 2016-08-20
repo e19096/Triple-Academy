@@ -18,14 +18,3 @@ Bear.prototype.walk = function (adjacentEmptyPositions) {
 };
 
 module.exports = Bear;
-
-
-
-//CLICK A CELL
-
-//check if this.currentPiece is a bear
-if(this.currentPiece instanceof Bear) {
-  //find adjacent empty positions and call Bear.walk
-  let adjacentEmptys = this.getAdjacentEmptys();
-
-}

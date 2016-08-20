@@ -50,15 +50,16 @@
 	const Piece = __webpack_require__(6);
 
 	$( () => {
-	  const rootEl = $('.ta');
+	  const $rootEl = $('.ta');
+
+	  // $playButton = $("<button>").addClass("play-button").html("Start!");
+	  // $rootEl.append($playButton);
+
+
 	  const game = new Game();
-	  const view = new View(game, rootEl);
+	  const view = new View(game, $rootEl);
 	  view.setupBoard();
 	  view.bindEvents();
-
-
-	  game.giveCurrentPiece();
-	  // game.board.makeGrid();
 	});
 
 
@@ -68,6 +69,7 @@
 
 	const ImgConstants = __webpack_require__(3);
 	const ImgValueConstants = __webpack_require__(4);
+	const InstructionConstants = __webpack_require__(9);
 
 	const View = function (game, $el) {
 	  this.game = game;
@@ -107,13 +109,16 @@
 	          });
 	          adjacents = that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
 	        }
-	      } else {
+	      } else { //there is already an image there
 	        currentImg = $(event.currentTarget).html();
+	        //display the instructions for this piece from instruction constants
+	        $(".instructions").html(InstructionConstants[currentImg.slice(19, -7)]);
 	      }
 	    },
 	    function(event){
 	      $(event.currentTarget).html(currentImg ? currentImg : "");
 	      $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left");
+	      $(".instructions").html("<br>Hover over an object for instructions!");
 	    }
 	  );
 
@@ -127,7 +132,13 @@
 	  });
 	};
 
+	View.prototype.unbindClick = function () {
+	  $(".cell").off("click");
+	};
+
 	View.prototype.makeMove = function ($cell) {
+	  // console.log(this.game.board.grid);
+	  // debugger
 	  //call game's play move?
 	  let cellNo = parseInt(($cell).attr("data-number"));
 	  let cellPos = [Math.floor(cellNo / 5), cellNo % 5];
@@ -139,20 +150,26 @@
 	    $(`.cell[data-number=${changedCellNo}]`).html(that.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? that.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
 	  });
 	  //also render new current piece
-	  $(`.current-piece`).html(this.game.currentPiece.imgTag);
+	  $(`.current-piece`).html("next:" + this.game.currentPiece.imgTag);
 
 	  if(this.game.won) {
+	    this.unbindClick();
 	    this.$el.addClass("game-won");
 	    console.log("you did it, really. good work.");
 	    $(".cell").html(ImgValueConstants[7]);
+	    $(".current-piece").html("<p>EXPECTED BEHAVIOR!!!</p>");
+
 	  } else if(this.game.isOver()) {
+	    this.unbindClick();
 	    this.$el.addClass("game-over");
-	    this.$el.append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
+	    $(".container").append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
 	    console.log("it's over. seriously.");
 	  }
 	};
 
 	View.prototype.setupBoard = function () {
+	  const $container = $("<div>").addClass("container");
+
 	  const grid = $("<ul>").addClass("grid").addClass("group");
 
 	  for(let i = 0; i < 25; i++) {
@@ -162,7 +179,8 @@
 	    grid.append($cell);
 	  }
 
-	  this.$el.append(grid); //set up the grid for the pieces to be places
+	  this.$el.append($container);
+	  $container.append(grid); //set up the grid for the pieces to be places
 
 	  this.game.generateInitialSetup();
 	  this.game.pieces.forEach(function (piece) {
@@ -170,10 +188,11 @@
 	  });
 
 	  //make a separate place to hold to current piece to be placed
-	  this.$el.append($("<div>").addClass("current-piece"));
-	  $(`.current-piece`).html(this.game.currentPiece.imgTag);
+	  $container.append($("<div>").addClass("current-piece"));
+	  $(`.current-piece`).html("next:" + this.game.currentPiece.imgTag);
 
-	  this.$el.append($("<div>").addClass("instructions"));
+	  $container.append($("<div>").addClass("instructions"));
+	  $(".instructions").html("<br>Hover over an object for instructions!");
 	};
 
 	module.exports = View;
@@ -202,19 +221,22 @@
 
 	  this.won = false;
 
-	  this.bears = [];
+	  // this.bears = [];
 	}
 
 	Game.prototype.playMove = function (clickedCellPos) {
 	  this.changed = [clickedCellPos];
-
-	  // let cellPos = [Math.floor(clickedCellNo / 5), clickedCellNo % 5];
-	  // this.board.grid[clickedCellPos[0]][clickedCellPos[1]] = this.currentPiece;
 	  this.updatePos(clickedCellPos, this.currentPiece);
+
+	  // if(this.currentPiece instanceof Bear) {
+	  //   debugger
+	  //   let adjacentEmptys = this.getAdjacentEmptys(clickedCellPos);
+	  //   let newPos = this.currentPiece.walk(adjacentEmptys);
+	  // }
 
 	  let adjacentPositions = this.adjacentMatchingPositions(clickedCellPos);
 	  while(adjacentPositions.length >= 2) {
-	    console.log("time to combine!");
+	    // console.log("time to combine!");
 	    let biggerPiece = this.combine(clickedCellPos, adjacentPositions); //combine them
 
 	    if(biggerPiece.value === 6) {
@@ -252,7 +274,20 @@
 	  let leftPos = [row, col - 1];
 	  let rightPos = [row, col + 1];
 
+	  if(this.board.grid[topPos[0][topPos[1]]] === "") {
+	    emptys.push(topPos);
+	  }
+	  if(this.board.grid[bottomPos[0][bottomPos[1]]] === "") {
+	    emptys.push(bottomPos);
+	  }
+	  if(this.board.grid[leftPos[0][leftPos[1]]] === "") {
+	    emptys.push(leftPos);
+	  }
+	  if(this.board.grid[rightPos[0][rightPos[1]]] === "") {
+	    emptys.push(rightPos);
+	  }
 
+	  return emptys;
 	};
 
 	Game.prototype.adjacentMatchingPositions = function (gridPos, pieceValue) {
@@ -373,7 +408,7 @@
 	    that.changed.push(pos);
 	  });
 	  let newValue = this.board.grid[cellPos[0]][cellPos[1]].value + 1;
-	  let biggerPiece = new Piece(ImgValueConstants[newValue].slice(19, -7), cellPos);
+	  let biggerPiece = new Piece(ImgValueConstants[newValue].slice(19, -8), cellPos);
 	  this.board.grid[cellPos[0]][cellPos[1]] = biggerPiece;
 
 	  return biggerPiece;
@@ -381,16 +416,16 @@
 
 	Game.prototype.giveCurrentPiece = function () {
 	  //pick random piece (from: grass, bush, tree, hut, bear)
-	  let randomType = ImgConstants[Math.floor(Math.random() * (33 - 1) + 1)];
+	  let randomType = ImgConstants[Math.floor(Math.random() * (52 - 1) + 1)];
 
 	  let randomCellNo = Math.floor(Math.random() * 25);
 	  let pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
 
-	  if(randomType === "bear") {
-	    return new Bear(pos);
-	  } else {
+	  // if(randomType === "bear") {
+	  //   return new Bear(pos);
+	  // } else {
 	    return new Piece(randomType, pos);
-	  }
+	  // }
 	};
 
 	Game.prototype.generateInitialSetup = function () {
@@ -399,7 +434,7 @@
 	  let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 
 	  for(let i = 0; i < numPieces; i++) {
-	    let randomType = ImgConstants[Math.floor(Math.random() * (33 - 1) + 1)];
+	    let randomType = ImgConstants[Math.floor(Math.random() * (52 - 1) + 1)];
 
 	    let randomCellNo = Math.floor(Math.random() * 25);
 	    let pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
@@ -407,7 +442,7 @@
 	    // make sure cell is empty else do it again
 	    // and also make sure this piece is not adjacent to 2+ of the same piece
 	    while(this.board.grid[pos[0]][pos[1]] !== "") {
-	      console.log("oops! there's already something there!");
+	      // console.log("oops! there's already something there!");
 	      randomCellNo = Math.floor(Math.random() * 25);
 	      pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
 
@@ -415,13 +450,11 @@
 	    }
 
 	    let adjacentPositions = this.adjacentMatchingPositions(pos, ImgValueConstants[randomType]);
-	    console.log(`number of adjacent pos: ${adjacentPositions.length}`);
+	    // console.log(`number of adjacent pos: ${adjacentPositions.length}`);
 	    while(adjacentPositions.length >= 2) {
-	      console.log("oops! close call. we need to combine! or..."); //ether pick a diff cell here or actually combine...
+	      // console.log("oops! close call. we'd need to combine!"); //ether pick a diff cell here or combine
 	      randomCellNo = Math.floor(Math.random() * 25);
 	      pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
-	      // let biggerPiece = this.combine(randomCellNo, adjacentPositions);
-	      // adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], biggerPiece.type );
 	      adjacentPositions = this.adjacentMatchingPositions(pos, ImgValueConstants[randomType]);
 	    }
 
@@ -440,44 +473,63 @@
 
 	//for initial setup (piece randomization)
 
-	ImgConstants = {
-	  1:  "grass",//"<img src='./images/grass.png' >",
-	  2:  "grass",//"<img src='./images/grass.png' >",
-	  3:  "grass",//"<img src='./images/grass.png' >",
-	  4:  "grass",//"<img src='./images/grass.png' >",
-	  5:  "grass",//"<img src='./images/grass.png' >",
-	  6:  "grass",//"<img src='./images/grass.png' >",
-	  7:  "grass",//"<img src='./images/grass.png' >",
-	  8:  "grass",//"<img src='./images/grass.png' >",
-	  9:  "grass",//"<img src='./images/grass.png' >",
-	  10: "grass",//"<img src='./images/grass.png' >",
-	  11: "grass",//"<img src='./images/grass.png' >",
-	  12: "grass",//"<img src='./images/grass.png' >",
-	  13: "grass",//"<img src='./images/grass.png' >",
-	  14: "grass",//"<img src='./images/grass.png' >",
-	  15: "grass",//"<img src='./images/grass.png' >",
-	  16: "grass",//"<img src='./images/grass.png' >",
-	  17: "grass",//"<img src='./images/grass.png' >",
-	  18: "grass",//"<img src='./images/grass.png' >",
-	  19: "grass",//"<img src='./images/grass.png' >",
-	  20: "grass",//"<img src='./images/grass.png' >",
+	const ImgConstants = {
+	  1:  "grass",
+	  2:  "grass",
+	  3:  "grass",
+	  4:  "grass",
+	  5:  "grass",
+	  6:  "grass",
+	  7:  "grass",
+	  8:  "grass",
+	  9:  "grass",
+	  10: "grass",
+	  11: "grass",
+	  12: "grass",
+	  13: "grass",
+	  14: "grass",
+	  15: "grass",
+	  16: "grass",
+	  17: "grass",
+	  18: "grass",
+	  19: "grass",
+	  20: "grass",
+	  21: "grass",
+	  22: "grass",
+	  23: "grass",
+	  24: "grass",
+	  25: "grass",
+	  26: "grass",
+	  27: "grass",
+	  28: "grass",
+	  29: "grass",
+	  30: "grass",
+	  31: "grass",
+	  32: "grass",
+	  33: "grass",
+	  34: "grass",
+	  35: "grass",
 
-	  21: "bush",//"<img src='./images/bush.png' >",
-	  22: "bush",//"<img src='./images/bush.png' >",
-	  23: "bush",//"<img src='./images/bush.png' >",
-	  24: "bush",//"<img src='./images/bush.png' >",
-	  25: "bush",//"<img src='./images/bush.png' >",
-	  26: "bush",//"<img src='./images/bush.png' >",
-	  27: "bush",//"<img src='./images/bush.png' >",
-	  28: "bush",//"<img src='./images/bush.png' >",
+	  36: "bush",
+	  37: "bush",
+	  38: "bush",
+	  39: "bush",
+	  40: "bush",
+	  41: "bush",
+	  42: "bush",
+	  43: "bush",
+	  44: "bush",
+	  45: "bush",
+	  46: "bush",
+	  47: "bush",
+	  48: "bush",
 
-	  29: "tree",//"<img src='./images/tree.png' >",
-	  30: "tree",//"<img src='./images/tree.png' >",
-	  31: "tree",//"<img src='./images/tree.png' >",
+	  49: "tree",
+	  50: "tree",
 
-	  32: "hut",//"<img src='./images/hut.png' >",
+	  51: "hut",
 
-	  33: "bear"
+	  52: "bear"
 	};
 
 	module.exports = ImgConstants;
@@ -487,7 +539,7 @@
 /* 4 */
 /***/ function(module, exports) {
 
-	ImgValueConstants = {
+	const ImgValueConstants = {
 	  // "<img src=\"./images/grass.png\" >": 0,
 	  // "<img src=\"./images/bush.png\" >": 1,
 	  // "<img src=\"./images/tree.png\" >": 2,
@@ -504,18 +556,18 @@
 	  "house"   : 5,
 	  "mansion" : 6,
 	  "aa"      : 7,
-	  // "floating_castle": 8,
+	  // "floatingcastle": 8,
 	  // "aa": 9,
 
-	  0 : "<img src=\"./images/bear.png\" >",
-	  1 : "<img src=\"./images/grass.png\" >",
-	  2 : "<img src=\"./images/bush.png\" >",
-	  3 : "<img src=\"./images/tree.png\" >",
-	  4 : "<img src=\"./images/hut.png\" >",
-	  5 : "<img src=\"./images/house.png\" >",
-	  6 : "<img src=\"./images/mansion.png\" >",
-	  7 : "<img src=\"./images/aa.png\" >"
-	  // 8 : "<img src='./images/floating_castle.png' >",
+	  0 : "<img src=\"./images/bear2.png\" >",
+	  1 : "<img src=\"./images/grass2.png\" >",
+	  2 : "<img src=\"./images/bush2.png\" >",
+	  3 : "<img src=\"./images/tree2.png\" >",
+	  4 : "<img src=\"./images/hut2.png\" >",
+	  5 : "<img src=\"./images/house2.png\" >",
+	  6 : "<img src=\"./images/mansion2.png\" >",
+	  7 : "<img src=\"./images/aa2.png\" >"
+	  // 8 : "<img src='./images/floatingcastle2.png' >",
 	  // 9 : "<img src='./images/aa.png' >"
 	};
 
@@ -597,9 +649,10 @@
 	//   return this.imgTag; //or call this getImg()
 	// };
 
-	// Piece.prototype.combine = function () {
-	//
-	// };
+	Piece.prototype.combine = function () {
+	  //this should take care of the logic of becoming the next level object...
+	  //bear will rewrite this 
+	};
 
 	module.exports = Piece;
 
@@ -630,17 +683,6 @@
 	module.exports = Bear;
 
 
-
-	//CLICK A CELL
-
-	//check if this.currentPiece is a bear
-	if(this.currentPiece instanceof Bear) {
-	  //find adjacent empty positions and call Bear.walk
-	  let adjacentEmptys = this.getAdjacentEmptys();
-
-	}
-
-
 /***/ },
 /* 8 */
 /***/ function(module, exports) {
@@ -654,6 +696,25 @@
 	};
 
 	module.exports = Util;
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	const ImgValueConstants = __webpack_require__(4);
+
+	const InstructionConstants = {
+	  "grass" : `<div>${ImgValueConstants[1]} + ${ImgValueConstants[1]} + ${ImgValueConstants[1]} = ${ImgValueConstants[2]}</div>`,
+	  "bush"  : `<div>${ImgValueConstants[2]} + ${ImgValueConstants[2]} + ${ImgValueConstants[2]} = ${ImgValueConstants[3]}</div>`,
+	  "tree"  : `<div>${ImgValueConstants[3]} + ${ImgValueConstants[3]} + ${ImgValueConstants[3]} = ${ImgValueConstants[4]}</div>`,
+	  "hut"   : `<div>${ImgValueConstants[4]} + ${ImgValueConstants[4]} + ${ImgValueConstants[4]} = ${ImgValueConstants[5]}</div>`,
+	  "house" : `<div>${ImgValueConstants[5]} + ${ImgValueConstants[5]} + ${ImgValueConstants[5]} =  YOU WIN!!</div>`
+	  // mansion: `${ImgValueConstants[1]} + ${ImgValueConstants[1]} + ${ImgValueConstants[1]} = ${ImgValueConstants[1]}`,
+	  // castle: `${ImgValueConstants[1]} + ${ImgValueConstants[1]} + ${ImgValueConstants[1]} = ${ImgValueConstants[1]}`
+	};
+
+	module.exports = InstructionConstants;
 
 
 /***/ }

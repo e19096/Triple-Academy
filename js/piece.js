@@ -20,8 +20,9 @@ Piece.prototype.getCellNo = function () {
 //   return this.imgTag; //or call this getImg()
 // };
 
-// Piece.prototype.combine = function () {
-//
-// };
+Piece.prototype.combine = function () {
+  //this should take care of the logic of becoming the next level object...
+  //bear will rewrite this 
+};
 
 module.exports = Piece;

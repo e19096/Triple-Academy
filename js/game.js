@@ -17,19 +17,22 @@ function Game() {
 
   this.won = false;
 
-  this.bears = [];
+  // this.bears = [];
 }
 
 Game.prototype.playMove = function (clickedCellPos) {
   this.changed = [clickedCellPos];
-
-  // let cellPos = [Math.floor(clickedCellNo / 5), clickedCellNo % 5];
-  // this.board.grid[clickedCellPos[0]][clickedCellPos[1]] = this.currentPiece;
   this.updatePos(clickedCellPos, this.currentPiece);
+
+  // if(this.currentPiece instanceof Bear) {
+  //   debugger
+  //   let adjacentEmptys = this.getAdjacentEmptys(clickedCellPos);
+  //   let newPos = this.currentPiece.walk(adjacentEmptys);
+  // }
 
   let adjacentPositions = this.adjacentMatchingPositions(clickedCellPos);
   while(adjacentPositions.length >= 2) {
-    console.log("time to combine!");
+    // console.log("time to combine!");
     let biggerPiece = this.combine(clickedCellPos, adjacentPositions); //combine them
 
     if(biggerPiece.value === 6) {
@@ -67,7 +70,20 @@ Game.prototype.getAdjacentEmptys = function (pos) {
   let leftPos = [row, col - 1];
   let rightPos = [row, col + 1];
 
+  if(this.board.grid[topPos[0][topPos[1]]] === "") {
+    emptys.push(topPos);
+  }
+  if(this.board.grid[bottomPos[0][bottomPos[1]]] === "") {
+    emptys.push(bottomPos);
+  }
+  if(this.board.grid[leftPos[0][leftPos[1]]] === "") {
+    emptys.push(leftPos);
+  }
+  if(this.board.grid[rightPos[0][rightPos[1]]] === "") {
+    emptys.push(rightPos);
+  }
 
+  return emptys;
 };
 
 Game.prototype.adjacentMatchingPositions = function (gridPos, pieceValue) {
@@ -188,7 +204,7 @@ Game.prototype.combine = function (cellPos, adjacentPositions) {
     that.changed.push(pos);
   });
   let newValue = this.board.grid[cellPos[0]][cellPos[1]].value + 1;
-  let biggerPiece = new Piece(ImgValueConstants[newValue].slice(19, -7), cellPos);
+  let biggerPiece = new Piece(ImgValueConstants[newValue].slice(19, -8), cellPos);
   this.board.grid[cellPos[0]][cellPos[1]] = biggerPiece;
 
   return biggerPiece;
@@ -196,16 +212,16 @@ Game.prototype.combine = function (cellPos, adjacentPositions) {
 
 Game.prototype.giveCurrentPiece = function () {
   //pick random piece (from: grass, bush, tree, hut, bear)
-  let randomType = ImgConstants[Math.floor(Math.random() * (33 - 1) + 1)];
+  let randomType = ImgConstants[Math.floor(Math.random() * (52 - 1) + 1)];
 
   let randomCellNo = Math.floor(Math.random() * 25);
   let pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
 
-  if(randomType === "bear") {
-    return new Bear(pos);
-  } else {
+  // if(randomType === "bear") {
+  //   return new Bear(pos);
+  // } else {
     return new Piece(randomType, pos);
-  }
+  // }
 };
 
 Game.prototype.generateInitialSetup = function () {
@@ -214,7 +230,7 @@ Game.prototype.generateInitialSetup = function () {
   let numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 
   for(let i = 0; i < numPieces; i++) {
-    let randomType = ImgConstants[Math.floor(Math.random() * (33 - 1) + 1)];
+    let randomType = ImgConstants[Math.floor(Math.random() * (52 - 1) + 1)];
 
     let randomCellNo = Math.floor(Math.random() * 25);
     let pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
@@ -222,7 +238,7 @@ Game.prototype.generateInitialSetup = function () {
     // make sure cell is empty else do it again
     // and also make sure this piece is not adjacent to 2+ of the same piece
     while(this.board.grid[pos[0]][pos[1]] !== "") {
-      console.log("oops! there's already something there!");
+      // console.log("oops! there's already something there!");
       randomCellNo = Math.floor(Math.random() * 25);
       pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
 
@@ -230,13 +246,11 @@ Game.prototype.generateInitialSetup = function () {
     }
 
     let adjacentPositions = this.adjacentMatchingPositions(pos, ImgValueConstants[randomType]);
-    console.log(`number of adjacent pos: ${adjacentPositions.length}`);
+    // console.log(`number of adjacent pos: ${adjacentPositions.length}`);
     while(adjacentPositions.length >= 2) {
-      console.log("oops! close call. we need to combine! or..."); //ether pick a diff cell here or actually combine...
+      // console.log("oops! close call. we'd need to combine!"); //ether pick a diff cell here or combine
       randomCellNo = Math.floor(Math.random() * 25);
       pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
-      // let biggerPiece = this.combine(randomCellNo, adjacentPositions);
-      // adjacentPositions = this.adjacentMatchingPositions([Math.floor(randomCellNo / 5), randomCellNo % 5], biggerPiece.type );
       adjacentPositions = this.adjacentMatchingPositions(pos, ImgValueConstants[randomType]);
     }
 
