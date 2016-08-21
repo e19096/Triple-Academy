@@ -44,32 +44,19 @@ level(a bigger version?) and the others disappear.
 - [ ] add bears
 
 
-view.js
--for setting up/rendering grid
-game.js
--game logic
-board.js
-play.js
--start game?
+- [ ] fix initial render(make sure nothing can be combined)
+- [ ] also now after adjacent cells are checked, already taken cells are not checked
 
+- [ ] refactor adjacentSamePieces to use recursion
 
-**fix initial render(make sure nothing can be combined)
-...also now after adjacent cells are checked, already taken cells are not checked
+- [ ] add preview of object on hover 
+- [ ] add movement
 
-after combines, has to check adjacent again
+- [ ] change background if piece exists?
 
-refactor adjacentSamePieces to use recursion
+- [ ] add a box with directions?
+- [ ] points?
 
---add movement
+- [ ] add crystal?
 
--add preview on hover
-
--change background if piece exists?
-
---add a box with directions
--points?
-
---add crystal?
-
---add directions for specific piece on hover
-(add to constants and add as $(.instructions).html when hovering over matching piece.)
+- [ ] add directions for specific piece on hover

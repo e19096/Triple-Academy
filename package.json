@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/e90216/Triple-Academy/issues"
   },
-  "homepage": "https://github.com/e90216/Triple-Academy#readme"
+  "homepage": "https://github.com/e90216/Triple-Academy#readme",
+  "dependencies": {
+    "webpack": "^1.13.2"
+  }
 }
