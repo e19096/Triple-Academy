@@ -1,9 +1,9 @@
 #Triple Academy
 Inspired by TripleTown by SpryFox
 
-[Triple Academy live][https://e90216.github.io/Triple-Academy/]
+[Triple Academy live](https://e90216.github.io/Triple-Academy/)
 
-Triple Academy is a 
+Triple Academy is a
 explain game
 instructions
 
