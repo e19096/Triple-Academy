@@ -1,0 +1,24 @@
+{
+  "name": "tiple-academy",
+  "version": "1.0.0",
+  "description": "Inspired by TripleTown by SpryFox",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "webpack --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/e90216/Triple-Academy.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/e90216/Triple-Academy/issues"
+  },
+  "homepage": "https://github.com/e90216/Triple-Academy#readme"
+}
