@@ -1,7 +1,9 @@
 #Triple Academy
 Inspired by TripleTown by SpryFox
 
-[Triple Academy live](https://e90216.github.io/Triple-Academy/)
+<!-- [Triple Academy live](https://e90216.github.io/Triple-Academy/) -->
+
+![main game page](./docs/screenshots/main.png)
 
 Triple Academy is a puzzle game in which the player must match objects in groups of three. Three or more adjacent objects of the same kind combine at the location of the last placed object of that group, into an object of the next tier, e.g. three bushes combine to form one tree. Objects must be in vertically or horizontally adjacent spots to combine (this can be in lines of three or in L shapes).
 
