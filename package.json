@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "webpack": "webpack --watch",
-    "deploy": "NODE_ENV=production webpack --config webpack.config.prod.js"
+    "build": "NODE_ENV=production webpack --config webpack.config.prod.js",
+    "deploy": "npm run build"
   },
   "repository": {
     "type": "git",
