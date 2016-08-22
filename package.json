@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "webpack": "webpack --watch"
+    "webpack": "webpack --watch",
+    "build": "npm run webpack",
+    "deploy": "npm run build"
   },
   "repository": {
     "type": "git",

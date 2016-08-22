@@ -1,6 +1,7 @@
 html {
   background-color: #57924f;
-  /*background-image: */
+  /*background-image: url('./trees2.png');*/
+  background-size: 300px 100%;
 }
 
 .group:after {
@@ -20,12 +21,13 @@ h1, figure, ul, li, p {
 p {
   color: white;
   font-size: 14px;
+  font-weight: bold;
 }
 
 h1 {
   margin-bottom: 20px;
   font-family: 'Baloo Da', sans-serif;
-  color: white;
+  color: whitesmoke;
   font-weight: normal;
   letter-spacing: 1px;
   text-shadow: 1px 1px 5px black;
