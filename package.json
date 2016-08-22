@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "webpack": "webpack --watch",
     "build": "NODE_ENV=production webpack --config webpack.config.prod.js",
-    "deploy": "npm run build"
+    "deploy": "npm run build",
+    "postinstall": "./node_modules/.bin/webpack"
   },
   "repository": {
     "type": "git",
