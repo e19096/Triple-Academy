@@ -95,22 +95,23 @@
 	      var cellNo = parseInt($(event.currentTarget).attr("data-number"));
 	
 	      var currentVal = that.game.currentPiece.value;
-	      var adjacents = that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
-	      while (adjacents.length >= 2) {
+	      that.game.setAdjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
+	      while (that.game.multAdjacentsExist()) {
+	        //adjacents.length >= 2) {
 	        currentVal++;
-	        that.game.adjacentTop.forEach(function (adjacentPos) {
+	        that.game.adjacentsObj.top.forEach(function (adjacentPos) {
 	          $('.cell[data-number=' + (adjacentPos[0] * 5 + adjacentPos[1]) + ']').addClass("bounce-down");
 	        });
-	        that.game.adjacentBottom.forEach(function (adjacentPos) {
+	        that.game.adjacentsObj.bottom.forEach(function (adjacentPos) {
 	          $('.cell[data-number=' + (adjacentPos[0] * 5 + adjacentPos[1]) + ']').addClass("bounce-up");
 	        });
-	        that.game.adjacentLeft.forEach(function (adjacentPos) {
+	        that.game.adjacentsObj.left.forEach(function (adjacentPos) {
 	          $('.cell[data-number=' + (adjacentPos[0] * 5 + adjacentPos[1]) + ']').addClass("bounce-right");
 	        });
-	        that.game.adjacentRight.forEach(function (adjacentPos) {
+	        that.game.adjacentsObj.right.forEach(function (adjacentPos) {
 	          $('.cell[data-number=' + (adjacentPos[0] * 5 + adjacentPos[1]) + ']').addClass("bounce-left");
 	        });
-	        adjacents = that.game.adjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
+	        that.game.setAdjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
 	      }
 	    } else {
 	      //there is already an image there
@@ -132,6 +133,13 @@
 	    }
 	    $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left zoom");
 	  });
+	
+	  $(".hold").on("click", function (event) {
+	    _this.game.swapHoldPiece(function () {
+	      $('.current-piece').html("next:" + that.game.currentPiece.imgTag);
+	      $('.hold').html("hold:" + that.game.holdPiece.imgTag);
+	    });
+	  });
 	};
 	
 	View.prototype.unbindClick = function () {
@@ -139,8 +147,6 @@
 	};
 	
 	View.prototype.makeMove = function ($cell) {
-	  // console.log(this.game.board.grid);
-	  // debugger
 	  var cellNo = parseInt($cell.attr("data-number"));
 	  var cellPos = [Math.floor(cellNo / 5), cellNo % 5];
 	  this.game.playMove(cellPos);
@@ -151,7 +157,9 @@
 	    $('.cell[data-number=' + changedCellNo + ']').html(that.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? that.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
 	  });
 	  //also render new current piece
+	  $('.score').html("score:<p>" + this.game.score + "</p>");
 	  $('.current-piece').html("next:" + this.game.currentPiece.imgTag);
+	  $('.hold').html("hold:<p>" + (this.game.holdPiece ? this.game.holdPiece.imgTag : "") + "</p>");
 	
 	  if (this.game.won) {
 	    this.unbindClick();
@@ -175,7 +183,6 @@
 	  for (var i = 0; i < 25; i++) {
 	    var $cell = $("<li>").addClass("cell");
 	    $cell.attr("data-number", i);
-	    // cell.html(i);
 	    grid.append($cell);
 	  }
 	
@@ -187,9 +194,15 @@
 	    $('.cell[data-number=' + piece.getCellNo() + ']').html(piece.imgTag);
 	  });
 	
+	  $container.append($("<div>").addClass("score"));
+	  $('.score').html("score:<p>" + this.game.score + "</p>");
+	
 	  //make a separate place to hold to current piece to be placed
 	  $container.append($("<div>").addClass("current-piece"));
 	  $('.current-piece').html("next:" + this.game.currentPiece.imgTag);
+	
+	  $container.append($("<div>").addClass("hold"));
+	  $('.hold').html("hold:<p>" + (this.game.holdPiece ? this.game.holdPiece.imgTag : "") + "</p>");
 	
 	  $container.append($("<div>").addClass("instructions"));
 	  $(".instructions").html("Hover over an object for instructions!");
@@ -275,19 +288,24 @@
 	  this.currentPiece = this.giveCurrentPiece();
 	  this.changed = [];
 	
-	  this.adjacentTop = [];
-	  this.adjacentBottom = [];
-	  this.adjacentLeft = [];
-	  this.adjacentRight = [];
-	
 	  this.won = false;
 	
+	  this.adjacentsObj = { top: [],
+	    bottom: [],
+	    left: [],
+	    right: [] };
+	
 	  // this.bears = [];
+	
+	  this.score = 0;
+	  this.holdPiece = undefined;
 	}
 	
 	Game.prototype.playMove = function (clickedCellPos) {
 	  this.changed = [clickedCellPos];
 	  this.updatePos(clickedCellPos, this.currentPiece);
+	
+	  this.score += this.currentPiece.value;
 	
 	  // if(this.currentPiece instanceof Bear) {
 	  //   debugger
@@ -295,17 +313,18 @@
 	  //   let newPos = this.currentPiece.walk(adjacentEmptys);
 	  // }
 	
-	  var adjacentPositions = this.adjacentMatchingPositions(clickedCellPos);
-	  while (adjacentPositions.length >= 2) {
-	    // console.log("time to combine!");
-	    var biggerPiece = this.combine(clickedCellPos, adjacentPositions); //combine them
+	  this.setAdjacentMatchingPositions(clickedCellPos);
+	
+	  while (this.multAdjacentsExist()) {
+	    var biggerPiece = this.combine(clickedCellPos); //combine them
+	    this.score += biggerPiece.value;
 	
 	    if (biggerPiece.value === 6) {
 	      console.log("YOU WIN!!!!!!!! YAAAAAYYYYYYY");
 	      this.won = true;
 	    }
 	
-	    adjacentPositions = this.adjacentMatchingPositions(clickedCellPos, biggerPiece.value); //check that that doesn't need to be combined
+	    this.setAdjacentMatchingPositions(clickedCellPos, biggerPiece.value); //check that that doesn't need to be combined
 	  }
 	
 	  if (this.isOver()) {
@@ -323,40 +342,51 @@
 	Game.prototype.isOver = function () {
 	  return this.board.isFull();
 	};
-	
-	Game.prototype.getAdjacentEmptys = function (pos) {
-	  var row = pos[0];
-	  var col = pos[1];
-	
-	  var emptys = [];
-	
-	  var topPos = [row - 1, col];
-	  var bottomPos = [row + 1, col];
-	  var leftPos = [row, col - 1];
-	  var rightPos = [row, col + 1];
-	
-	  if (this.board.grid[topPos[0][topPos[1]]] === "") {
-	    emptys.push(topPos);
-	  }
-	  if (this.board.grid[bottomPos[0][bottomPos[1]]] === "") {
-	    emptys.push(bottomPos);
-	  }
-	  if (this.board.grid[leftPos[0][leftPos[1]]] === "") {
-	    emptys.push(leftPos);
-	  }
-	  if (this.board.grid[rightPos[0][rightPos[1]]] === "") {
-	    emptys.push(rightPos);
-	  }
-	
-	  return emptys;
+	//
+	// Game.prototype.getAdjacentEmptys = function (pos) {
+	//   let row = pos[0];
+	//   let col = pos[1];
+	//
+	//   let emptys = [];
+	//
+	//   let topPos = [row - 1, col];
+	//   let bottomPos = [row + 1, col];
+	//   let leftPos = [row, col - 1];
+	//   let rightPos = [row, col + 1];
+	//
+	//   if(this.board.grid[topPos[0][topPos[1]]] === "") {
+	//     emptys.push(topPos);
+	//   }
+	//   if(this.board.grid[bottomPos[0][bottomPos[1]]] === "") {
+	//     emptys.push(bottomPos);
+	//   }
+	//   if(this.board.grid[leftPos[0][leftPos[1]]] === "") {
+	//     emptys.push(leftPos);
+	//   }
+	//   if(this.board.grid[rightPos[0][rightPos[1]]] === "") {
+	//     emptys.push(rightPos);
+	//   }
+	//
+	//   return emptys;
+	// };
+	//
+	Game.prototype.emptyAdjacentsObj = function () {
+	  this.adjacentsObj = { top: [],
+	    bottom: [],
+	    left: [],
+	    right: [] };
 	};
 	
-	Game.prototype.adjacentMatchingPositions = function (gridPos, pieceValue) {
-	  //reset the adjacent arrays
-	  this.adjacentTop = [];
-	  this.adjacentBottom = [];
-	  this.adjacentLeft = [];
-	  this.adjacentRight = [];
+	Game.prototype.multAdjacentsExist = function () {
+	  if (this.adjacentsObj.top.length + this.adjacentsObj.bottom.length + this.adjacentsObj.left.length + this.adjacentsObj.right.length >= 2) {
+	    return true;
+	  }
+	  return false;
+	};
+	
+	Game.prototype.setAdjacentMatchingPositions = function (gridPos, pieceValue, reset) {
+	
+	  this.emptyAdjacentsObj(); //empty the arrays
 	
 	  var row = gridPos[0];
 	  var col = gridPos[1];
@@ -366,126 +396,102 @@
 	    pieceValue = this.currentPiece.value;
 	  }
 	
-	  var adjacents = []; //to keep track of adjacent same objects
-	
-	  //check all adjacent cells to check if same piece
-	  var topPos = [row - 1, col];
+	  var topPos = [row - 1, col]; //check all adjacent cells to check if same piece
 	  var bottomPos = [row + 1, col];
 	  var leftPos = [row, col - 1];
 	  var rightPos = [row, col + 1];
 	
-	  var that = this;
 	  //if not top row
 	  if (row > 0 && this.board.grid[topPos[0]][topPos[1]].value === pieceValue) {
 	    //top
-	    // debugger
-	    adjacents.push(topPos); //adjacents.concat(this.adjacentMatchingPositions(topPos, pieceValue, thirdParamToExcludeBottomPosCheck?));
-	    that.adjacentTop.push(topPos);
+	    this.adjacentsObj.top.push(topPos);
 	    if (topPos[0] > 0 && this.board.grid[topPos[0] - 1][topPos[1]].value === pieceValue) {
 	      //top
-	      adjacents.push([topPos[0] - 1, topPos[1]]);
-	      that.adjacentTop.push([topPos[0] - 1, topPos[1]]);
+	      this.adjacentsObj.top.push([topPos[0] - 1, topPos[1]]);
 	    }
 	    if (topPos[1] % 5 > 0 && this.board.grid[topPos[0]][topPos[1] - 1].value === pieceValue) {
 	      //left
-	      adjacents.push([topPos[0], topPos[1] - 1]);
-	      that.adjacentLeft.push([topPos[0], topPos[1] - 1]);
-	      that.adjacentTop.push([topPos[0], topPos[1] - 1]);
+	      this.adjacentsObj.top.push([topPos[0], topPos[1] - 1]);
+	      this.adjacentsObj.left.push([topPos[0], topPos[1] - 1]);
 	    }
 	    if (topPos[1] % 5 < 4 && this.board.grid[topPos[0]][topPos[1] + 1].value === pieceValue) {
 	      //right
-	      adjacents.push([topPos[0], topPos[1] + 1]);
-	      that.adjacentRight.push([topPos[0], topPos[1] + 1]);
-	      that.adjacentTop.push([topPos[0], topPos[1] + 1]);
+	      this.adjacentsObj.top.push([topPos[0], topPos[1] + 1]);
+	      this.adjacentsObj.right.push([topPos[0], topPos[1] + 1]);
 	    }
 	  }
 	
 	  //if not bottom row
 	  if (row < 4 && this.board.grid[bottomPos[0]][bottomPos[1]].value === pieceValue) {
 	    //bottom
-	    // debugger
-	    adjacents.push(bottomPos); //= this.adjacentMatchingPositions(Pos, pieceValue);
-	    that.adjacentBottom.push(bottomPos);
+	    this.adjacentsObj.bottom.push(bottomPos);
 	    if (bottomPos[0] < 4 && this.board.grid[bottomPos[0] + 1][bottomPos[1]].value === pieceValue) {
 	      //bottom
-	      adjacents.push([bottomPos[0] + 1, bottomPos[1]]);
-	      that.adjacentBottom.push([bottomPos[0] + 1, bottomPos[1]]);
+	      this.adjacentsObj.bottom.push([bottomPos[0] + 1, bottomPos[1]]);
 	    }
 	    if (bottomPos[1] % 5 > 0 && this.board.grid[bottomPos[0]][bottomPos[1] - 1].value === pieceValue) {
 	      //left
-	      adjacents.push([bottomPos[0], bottomPos[1] - 1]);
-	      that.adjacentLeft.push([bottomPos[0], bottomPos[1] - 1]);
-	      that.adjacentBottom.push([bottomPos[0], bottomPos[1] - 1]);
+	      this.adjacentsObj.bottom.push([bottomPos[0], bottomPos[1] - 1]);
+	      this.adjacentsObj.left.push([bottomPos[0], bottomPos[1] - 1]);
 	    }
 	    if (bottomPos[1] % 5 < 4 && this.board.grid[bottomPos[0]][bottomPos[1] + 1].value === pieceValue) {
 	      //right
-	      adjacents.push([bottomPos[0], bottomPos[1] + 1]);
-	      that.adjacentRight.push([bottomPos[0], bottomPos[1] + 1]);
-	      that.adjacentBottom.push([bottomPos[0], bottomPos[1] + 1]);
+	      this.adjacentsObj.bottom.push([bottomPos[0], bottomPos[1] + 1]);
+	      this.adjacentsObj.right.push([bottomPos[0], bottomPos[1] + 1]);
 	    }
 	  }
 	
 	  //if not left-most col
 	  if (col % 5 > 0 && this.board.grid[leftPos[0]][leftPos[1]].value === pieceValue) {
 	    //left
-	    // debugger
-	    adjacents.push(leftPos); // = this.adjacentMatchingPositions(Pos, pieceValue);
-	    that.adjacentLeft.push(leftPos);
+	    this.adjacentsObj.left.push(leftPos);
 	    if (leftPos[0] > 0 && this.board.grid[leftPos[0] - 1][leftPos[1]].value === pieceValue) {
 	      //top
-	      adjacents.push([leftPos[0] - 1, leftPos[1]]);
-	      that.adjacentTop.push([leftPos[0] - 1, leftPos[1]]);
-	      that.adjacentLeft.push([leftPos[0] - 1, leftPos[1]]);
+	      this.adjacentsObj.left.push([leftPos[0] - 1, leftPos[1]]);
+	      this.adjacentsObj.top.push([leftPos[0] - 1, leftPos[1]]);
 	    }
 	    if (leftPos[0] < 4 && this.board.grid[leftPos[0] + 1][leftPos[1]].value === pieceValue) {
 	      //bottom
-	      adjacents.push([leftPos[0] + 1, leftPos[1]]);
-	      that.adjacentBottom.push([leftPos[0] + 1, leftPos[1]]);
-	      that.adjacentLeft.push([leftPos[0] + 1, leftPos[1]]);
+	      this.adjacentsObj.left.push([leftPos[0] + 1, leftPos[1]]);
+	      this.adjacentsObj.bottom.push([leftPos[0] + 1, leftPos[1]]);
 	    }
 	    if (leftPos[1] % 5 > 0 && this.board.grid[leftPos[0]][leftPos[1] - 1].value === pieceValue) {
 	      //left
-	      adjacents.push([leftPos[0], leftPos[1] - 1]);
-	      that.adjacentLeft.push([leftPos[0], leftPos[1] - 1]);
+	      this.adjacentsObj.left.push([leftPos[0], leftPos[1] - 1]);
 	    }
 	  }
 	
 	  //if not right-most col
 	  if (col % 5 < 4 && this.board.grid[rightPos[0]][rightPos[1]].value === pieceValue) {
 	    //right
-	    // debugger
-	    adjacents.push(rightPos); // = this.adjacentMatchingPositions(Pos, pieceValue);
-	    that.adjacentRight.push(rightPos);
+	    this.adjacentsObj.right.push(rightPos);
 	    if (rightPos[0] > 0 && this.board.grid[rightPos[0] - 1][rightPos[1]].value === pieceValue) {
 	      //top
-	      adjacents.push([rightPos[0] - 1, rightPos[1]]);
-	      that.adjacentTop.push([rightPos[0] - 1, rightPos[1]]);
-	      that.adjacentRight.push([rightPos[0] - 1, rightPos[1]]);
+	      this.adjacentsObj.right.push([rightPos[0] - 1, rightPos[1]]);
+	      this.adjacentsObj.top.push([rightPos[0] - 1, rightPos[1]]);
 	    }
 	    if (rightPos[0] < 4 && this.board.grid[rightPos[0] + 1][rightPos[1]].value === pieceValue) {
 	      //bottom
-	      adjacents.push([rightPos[0] + 1, rightPos[1]]);
-	      that.adjacentBottom.push([rightPos[0] + 1, rightPos[1]]);
-	      that.adjacentRight.push([rightPos[0] + 1, rightPos[1]]);
+	      this.adjacentsObj.right.push([rightPos[0] + 1, rightPos[1]]);
+	      this.adjacentsObj.bottom.push([rightPos[0] + 1, rightPos[1]]);
 	    }
 	    if (rightPos[1] % 5 < 4 && this.board.grid[rightPos[0]][rightPos[1] + 1].value === pieceValue) {
 	      //right
-	      adjacents.push([rightPos[0], rightPos[1] + 1]);
-	      that.adjacentRight.push([rightPos[0], rightPos[1] + 1]);
+	      this.adjacentsObj.right.push([rightPos[0], rightPos[1] + 1]);
 	    }
 	  }
-	
-	  return adjacents;
 	};
 	
 	Game.prototype.combine = function (cellPos, adjacentPositions) {
 	  var that = this;
-	  //clear adjacent cells and put bigger piece in cell (or return new piece)
-	  adjacentPositions.forEach(function (pos) {
-	    //clear adjacent cells
-	    that.board.grid[pos[0]][pos[1]] = "";
-	    that.changed.push(pos);
-	  });
+	
+	  for (var direction in this.adjacentsObj) {
+	    that.adjacentsObj[direction].forEach(function (pos) {
+	      that.board.grid[pos[0]][pos[1]] = "";
+	      that.changed.push(pos);
+	    });
+	  }
+	
 	  var newValue = this.board.grid[cellPos[0]][cellPos[1]].value + 1;
 	  var biggerPiece = new Piece(ImgValueConstants[newValue].slice(26, -8), cellPos);
 	  this.board.grid[cellPos[0]][cellPos[1]] = biggerPiece;
@@ -521,26 +527,36 @@
 	    // make sure cell is empty else do it again
 	    // and also make sure this piece is not adjacent to 2+ of the same piece
 	    while (this.board.grid[pos[0]][pos[1]] !== "") {
-	      // console.log("oops! there's already something there!");
 	      randomCellNo = Math.floor(Math.random() * 25);
 	      pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
 	
 	      //also check adjacents in here?
 	    }
 	
-	    var adjacentPositions = this.adjacentMatchingPositions(pos, ImgValueConstants[randomType]);
-	    // console.log(`number of adjacent pos: ${adjacentPositions.length}`);
-	    while (adjacentPositions.length >= 2) {
-	      // console.log("oops! close call. we'd need to combine!"); //ether pick a diff cell here or combine
+	    this.setAdjacentMatchingPositions(pos, ImgValueConstants[randomType]);
+	    while (this.multAdjacentsExist()) {
 	      randomCellNo = Math.floor(Math.random() * 25);
 	      pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
-	      adjacentPositions = this.adjacentMatchingPositions(pos, ImgValueConstants[randomType]);
+	      this.setAdjacentMatchingPositions(pos, ImgValueConstants[randomType]);
 	    }
 	
 	    var randomPiece = new Piece(randomType, pos);
 	    this.pieces.push(randomPiece);
 	    this.board.grid[pos[0]][pos[1]] = randomPiece;
 	  }
+	};
+	
+	Game.prototype.swapHoldPiece = function (updateView) {
+	  if (this.holdPiece) {
+	    var temp = this.holdPiece;
+	    this.holdPiece = this.currentPiece;
+	    this.currentPiece = temp;
+	  } else {
+	    this.holdPiece = this.currentPiece;
+	    this.currentPiece = this.giveCurrentPiece();
+	  }
+	
+	  updateView();
 	};
 	
 	module.exports = Game;

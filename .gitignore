@@ -1,8 +1,8 @@
 .DS_Store
-/node_modules*
+/node_modules
 npm-debug.log
-/docs
 /lib
 .jshintrc
 package.json
-webpack.config*
+webpack.config.js
+bundle.js.map

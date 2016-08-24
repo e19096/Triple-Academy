@@ -1,5 +1,6 @@
 html {
-  background-color: #57924f;
+  /*background-color: #57924f;*/
+  background-color: #fafafa;
   /*background-image: url('./trees2.png');*/
   background-size: 300px 100%;
 }
@@ -204,13 +205,50 @@ h1 {
   height: 85px;
   border: 3px solid gray;
   border-radius: 20px;
-  margin-left: 20px;
-  margin-top: 5px;
+  margin-left: 15px;
+  margin-top: 55px;
   background-color: #83b383;
   display: inline-block;
   font-family: 'Baloo Da', sans-serif;
   letter-spacing: 1px;
   text-shadow: 1px 1px 5px black;
+}
+
+.ta .hold {
+  width: 69px;
+  height: 69px;
+  border: 3px solid gray;
+  border-radius: 50px;
+  margin-left: 15px;
+  margin-top: 15px;
+  background-color: #dbca93;
+  display: inline-block;
+  font-family: 'Baloo Da', sans-serif;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 5px black;
+}
+
+.ta .hold img {
+  padding: 0;
+  margin-top: -10px;
+}
+
+.ta .score {
+  width: 75px;
+  height: 60px;
+  border: 3px solid gray;
+  border-radius: 5px;
+  margin-left: 9px;
+  margin-top: 5px;
+  background-color: lightgray;
+  display: inline-block;
+  font-family: 'Baloo Da', sans-serif;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 5px black;
+}
+
+.ta .score p {
+  font-size: 20px;
 }
 
 .game-over ul, .game-over li, .game-over div {
@@ -240,7 +278,7 @@ h1 {
   position: absolute;
   height: 40px;
   width: 265px;
-  margin-top: 230px;
+  margin-top: 30px;
   margin-left: 20px;
   border-radius: 5px;
   text-align: center;
