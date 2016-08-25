@@ -278,7 +278,7 @@ h1 {
   cursor: none;
 }
 
-.game-over-message {
+.game-over marquee {
   color: pink;
   font-size: 75px;
   font-family: 'Baloo Da', sans-serif;

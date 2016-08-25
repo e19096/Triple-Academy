@@ -47,7 +47,7 @@
 	'use strict';
 	
 	var View = __webpack_require__(1);
-	var Game = __webpack_require__(4);
+	var Game = __webpack_require__(7);
 	
 	$(function () {
 	  // $('.title').addClass('cute-bounce');
@@ -73,7 +73,7 @@
 	// const ImgConstants = require('./constants/img_constants');
 	var ImgValueConstants = __webpack_require__(2);
 	var InstructionConstants = __webpack_require__(3);
-	var Bear = __webpack_require__(8);
+	var Bear = __webpack_require__(4);
 	
 	var View = function View(game, $el) {
 	  this.game = game;
@@ -87,6 +87,7 @@
 	  var that = this;
 	
 	  var currentImg = void 0;
+	  var clear = false;
 	  $(".cell").hover(function (event) {
 	    if ($(event.currentTarget).html() === "") {
 	
@@ -115,14 +116,17 @@
 	        });
 	        that.game.setAdjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
 	      }
+	      clear = true;
 	    } else {
-	      //there is already an image there
-	      currentImg = $(event.currentTarget).html();
+	      clear = false;
 	      //display the instructions for this piece from instruction constants
 	      $(".instructions").html(InstructionConstants[currentImg.slice(26, -7)]);
 	    }
 	  }, function (event) {
-	    $(event.currentTarget).html(currentImg ? currentImg : "");
+	    if (clear) {
+	      $(event.currentTarget).html("");
+	    }
+	
 	    $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left");
 	    $(".instructions").html("Hover over an object for instructions!");
 	  });
@@ -146,25 +150,23 @@
 	
 	View.prototype.unbindClick = function () {
 	  $(".cell").off("click");
+	  // $(".cell").off("hovers");
+	  $(".hold").off("click");
 	};
 	
 	View.prototype.makeMove = function ($cell) {
+	
 	  var cellNo = parseInt($cell.attr("data-number"));
 	  var cellPos = [Math.floor(cellNo / 5), cellNo % 5];
 	
-	  if (this.game.currentPiece instanceof Bear) {
-	    // debugger
-	  }
 	  this.game.playMove(cellPos);
-	  //render new board
+	  //then render new board
 	  var that = this;
 	  this.game.changed.forEach(function (changedPos) {
 	    // debugger
 	    var changedCellNo = changedPos[0] * 5 + changedPos[1];
 	    $('.cell[data-number=' + changedCellNo + ']').html(that.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? that.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
 	  });
-	
-	  this.game.walkBears(this.updateBears.bind(that));
 	
 	  //also render new current piece
 	  $('.score').html("score:<p>" + this.game.score + "</p>");
@@ -182,6 +184,8 @@
 	    this.$el.addClass("game-over");
 	    $(".container").append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
 	    console.log("it's over. seriously.");
+	  } else {
+	    this.game.walkBears(this.updateBears.bind(that));
 	  }
 	};
 	
@@ -190,11 +194,20 @@
 	//css transition
 	View.prototype.updateBears = function () {
 	  var that = this;
+	
 	  this.game.oldBears.forEach(function (changedPos, i) {
 	    var changedCellNo = changedPos[0] * 5 + changedPos[1];
-	    $('.cell[data-number=' + changedCellNo + ']').addClass(' ' + that.movementClass(i));
+	    $('.cell[data-number=' + changedCellNo + ']').addClass('' + that.movementClass(i));
+	    $('.cell[data-number=' + changedCellNo + ']').off('hover');
+	
 	    //use index no to index into newbears to see what direction they are moving in
 	  });
+	  this.game.newBears.forEach(function (changedPos) {
+	    var changedCellNo = changedPos[0] * 5 + changedPos[1];
+	    // $(`.cell[data-number=${changedCellNo}]`).off('click');
+	    $('.cell[data-number=' + changedCellNo + ']').off('hover');
+	  });
+	
 	  //add class to bears to bounce
 	  this.bearTimeout = setTimeout(function () {
 	    var bearArr = that.game.newBears.concat(that.game.oldBears);
@@ -202,9 +215,10 @@
 	      var changedCellNo = changedPos[0] * 5 + changedPos[1];
 	      $('.cell[data-number=' + changedCellNo + ']').html(that.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? that.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
 	    });
-	    $('.cell').removeClass("walk toLeft toRight toUp toDown");
+	    $('.cell').removeClass("toLeft toRight toUp toDown zoom");
+	    // that.bindEvents();
 	
-	    // clearTimeout(that.bearTimeout);
+	    clearTimeout(that.bearTimeout);
 	  }, 800);
 	
 	  //clear timeout
@@ -219,19 +233,15 @@
 	
 	  if (oldRow === newRow) {
 	    if (oldCol - 1 === newCol) {
-	      //it moved left
 	      return "toLeft";
 	    } else {
-	      //it moved right
 	      return "toRight";
 	    }
 	  } else {
 	    //same col
 	    if (oldRow - 1 === newRow) {
-	      //it moved up
 	      return "toUp";
 	    } else {
-	      //it moved down
 	      return "toDown";
 	    }
 	  }
@@ -298,14 +308,14 @@
 	  // "floatingcastle": 8,
 	  // "aa": 9,
 	
-	  0: "<img src=\"./assets/images/bear2.png\" >",
-	  1: "<img src=\"./assets/images/grass2.png\" >",
-	  2: "<img src=\"./assets/images/bush2.png\" >",
-	  3: "<img src=\"./assets/images/tree2.png\" >",
-	  4: "<img src=\"./assets/images/hut2.png\" >",
-	  5: "<img src=\"./assets/images/house2.png\" >",
-	  6: "<img src=\"./assets/images/mansion2.png\" >",
-	  7: "<img src=\"./assets/images/aa2.png\" >"
+	  0: "<img src=\"./assets/images/bear2.png\">",
+	  1: "<img src=\"./assets/images/grass2.png\">",
+	  2: "<img src=\"./assets/images/bush2.png\">",
+	  3: "<img src=\"./assets/images/tree2.png\">",
+	  4: "<img src=\"./assets/images/hut2.png\">",
+	  5: "<img src=\"./assets/images/house2.png\">",
+	  6: "<img src=\"./assets/images/mansion2.png\">",
+	  7: "<img src=\"./assets/images/aa2.png\">"
 	  // 8 : "<img src='./images/floatingcastle2.png' >",
 	  // 9 : "<img src='./images/aa.png' >"
 	};
@@ -339,11 +349,91 @@
 
 	'use strict';
 	
-	var ImgConstants = __webpack_require__(5);
+	var Piece = __webpack_require__(5);
+	var Util = __webpack_require__(6);
+	
+	var Bear = function Bear(cellPos) {
+	  Piece.call(this, "bear", cellPos);
+	};
+	
+	Util.inherits(Bear, Piece);
+	
+	Bear.prototype.walk = function (adjacentEmptyPositions) {
+	  //find adjacent empty spaces... or get them from game?
+	  //pic a random one to walk to
+	  var n = Math.floor(Math.random() * adjacentEmptyPositions.length);
+	  //update bear's pos and cell No
+	  this.pos = adjacentEmptyPositions[n];
+	  //update grid or re turn new pos so game can update grid
+	  return this.pos;
+	};
+	
+	module.exports = Bear;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
 	var ImgValueConstants = __webpack_require__(2);
-	var Board = __webpack_require__(6);
-	var Piece = __webpack_require__(7);
-	var Bear = __webpack_require__(8);
+	
+	var Piece = function Piece(type, cellPos) {
+	  this.type = type;
+	
+	  this.pos = cellPos; //[row, col]
+	  // this.cellNo = cellPos[0] * 5 + cellPos[1];
+	
+	  this.value = ImgValueConstants[type];
+	
+	  this.imgTag = ImgValueConstants[this.value];
+	  // debugger
+	};
+	
+	Piece.prototype.getCellNo = function () {
+	  return this.pos[0] * 5 + this.pos[1];
+	};
+	
+	// Piece.prototype.render = function () {
+	//   return this.imgTag; //or call this getImg()
+	// };
+	
+	Piece.prototype.combine = function () {
+	  //this should take care of the logic of becoming the next level object...
+	  //bear will rewrite this
+	};
+	
+	module.exports = Piece;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var Util = {
+	  inherits: function inherits(ChildClass, BaseClass) {
+	    function Surrogate() {
+	      this.constructor = ChildClass;
+	    }
+	    Surrogate.prototype = BaseClass.prototype;
+	    ChildClass.prototype = new Surrogate();
+	  }
+	};
+	
+	module.exports = Util;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var ImgConstants = __webpack_require__(8);
+	var ImgValueConstants = __webpack_require__(2);
+	var Board = __webpack_require__(9);
+	var Piece = __webpack_require__(5);
+	var Bear = __webpack_require__(4);
 	
 	function Game() {
 	  this.board = new Board();
@@ -452,6 +542,10 @@
 	    }
 	  });
 	
+	  // console.log(this.oldBears);
+	  // console.log(this.newBears);
+	  // console.log(this.bears);
+	  // console.log(this.board.grid);
 	  updateBears();
 	};
 	
@@ -578,7 +672,7 @@
 	  }
 	
 	  var newValue = this.board.grid[cellPos[0]][cellPos[1]].value + 1;
-	  var biggerPiece = new Piece(ImgValueConstants[newValue].slice(26, -8), cellPos);
+	  var biggerPiece = new Piece(ImgValueConstants[newValue].slice(26, -7), cellPos);
 	  this.board.grid[cellPos[0]][cellPos[1]] = biggerPiece;
 	
 	  return biggerPiece;
@@ -586,7 +680,7 @@
 	
 	Game.prototype.giveCurrentPiece = function () {
 	  //pick random piece (from: grass, bush, tree, hut, bear)
-	  var randomType = ImgConstants[Math.floor(Math.random() * (58 - 1) + 1)];
+	  var randomType = ImgConstants[Math.floor(Math.random() * (55 - 1) + 1)];
 	
 	  var randomCellNo = Math.floor(Math.random() * 25);
 	  // let pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
@@ -647,7 +741,7 @@
 	module.exports = Game;
 
 /***/ },
-/* 5 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -677,19 +771,19 @@
 	  20: "grass",
 	  21: "grass",
 	  22: "grass",
-	  23: "bear",
-	  24: "bear",
-	  25: "bear",
-	  26: "bear",
-	  27: "bear",
-	  28: "bear",
-	  29: "bear",
-	  30: "bear",
-	  31: "bear",
-	  32: "bear",
-	  33: "bear",
-	  34: "bear",
-	  35: "bear",
+	  23: "grass",
+	  24: "grass",
+	  25: "grass",
+	  26: "grass",
+	  27: "grass",
+	  28: "grass",
+	  29: "grass",
+	  30: "grass",
+	  31: "grass",
+	  32: "grass",
+	  33: "grass",
+	  34: "grass",
+	  35: "grass",
 	
 	  36: "bush",
 	  37: "bush",
@@ -712,16 +806,13 @@
 	
 	  52: "bear",
 	  53: "bear",
-	  54: "bear",
-	  55: "bear",
-	  56: "bear",
-	  57: "bear"
+	  54: "bear"
 	};
 	
 	module.exports = ImgConstants;
 
 /***/ },
-/* 6 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -769,86 +860,6 @@
 	
 	
 	module.exports = Board;
-
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var ImgValueConstants = __webpack_require__(2);
-	
-	var Piece = function Piece(type, cellPos) {
-	  this.type = type;
-	
-	  this.pos = cellPos; //[row, col]
-	  // this.cellNo = cellPos[0] * 5 + cellPos[1];
-	
-	  this.value = ImgValueConstants[type];
-	
-	  this.imgTag = ImgValueConstants[this.value];
-	  // debugger
-	};
-	
-	Piece.prototype.getCellNo = function () {
-	  return this.pos[0] * 5 + this.pos[1];
-	};
-	
-	// Piece.prototype.render = function () {
-	//   return this.imgTag; //or call this getImg()
-	// };
-	
-	Piece.prototype.combine = function () {
-	  //this should take care of the logic of becoming the next level object...
-	  //bear will rewrite this
-	};
-	
-	module.exports = Piece;
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Piece = __webpack_require__(7);
-	var Util = __webpack_require__(9);
-	
-	var Bear = function Bear(cellPos) {
-	  Piece.call(this, "bear", cellPos);
-	};
-	
-	Util.inherits(Bear, Piece);
-	
-	Bear.prototype.walk = function (adjacentEmptyPositions) {
-	  //find adjacent empty spaces... or get them from game?
-	  //pic a random one to walk to
-	  var n = Math.floor(Math.random() * adjacentEmptyPositions.length);
-	  //update bear's pos and cell No
-	  this.pos = adjacentEmptyPositions[n];
-	  //update grid or re turn new pos so game can update grid
-	  return this.pos;
-	};
-	
-	module.exports = Bear;
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	var Util = {
-	  inherits: function inherits(ChildClass, BaseClass) {
-	    function Surrogate() {
-	      this.constructor = ChildClass;
-	    }
-	    Surrogate.prototype = BaseClass.prototype;
-	    ChildClass.prototype = new Surrogate();
-	  }
-	};
-	
-	module.exports = Util;
 
 /***/ }
 /******/ ]);
