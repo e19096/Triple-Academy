@@ -19,10 +19,27 @@ h1, figure, ul, li, p {
   color: white;
 }
 
+/*.cute-bounce {
+  animation-name: cuteBounce;
+  animation-duration: 0.6s;
+  animation-iteration-count: 2;
+}
+
+@keyframes cuteBounce {
+  40%{
+    transform: translateY(18%);
+    transform: scaleY(1.5);
+  }
+  20%{
+    transform: translateY(12%);
+    transform: scaleY(1.2);
+  }
+}*/
+
 p {
-  color: white;
+  color: lightgray;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: normal;
 }
 
 h1 {
@@ -50,7 +67,7 @@ h1 {
   height: 375px;
   padding: 20px;
   margin-bottom: 25px;
-  background-color: black;
+  background-color: #ffa1a1;
   border-radius: 5px;
 }
 
@@ -206,7 +223,7 @@ h1 {
   border: 3px solid gray;
   border-radius: 20px;
   margin-left: 15px;
-  margin-top: 55px;
+  margin-top: 60px;
   background-color: #83b383;
   display: inline-block;
   font-family: 'Baloo Da', sans-serif;
@@ -220,7 +237,7 @@ h1 {
   border: 3px solid gray;
   border-radius: 50px;
   margin-left: 15px;
-  margin-top: 15px;
+  margin-top: 10px;
   background-color: #dbca93;
   display: inline-block;
   font-family: 'Baloo Da', sans-serif;
@@ -249,6 +266,7 @@ h1 {
 
 .ta .score p {
   font-size: 20px;
+  color: white;
 }
 
 .game-over ul, .game-over li, .game-over div {
@@ -282,10 +300,12 @@ h1 {
   margin-left: 20px;
   border-radius: 5px;
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   vertical-align: center;
   font-family: "Baloo Da", sans-serif;
-  color: darkgray;
+  color: white;
+  letter-spacing: 0.5px;
+  font-weight: lighter;
 }
 
 .instructions > div {
@@ -297,9 +317,115 @@ h1 {
   letter-spacing: 0.5px;
 }
 
+.instructions > div .bear-instr {
+  font-family: sans-serif;
+
+}
+
 .instructions > div > img {
   display: inline-block;
   width: 40px;
   height: 40px;
   margin-bottom: -15px;
 }
+
+.ta .walk img {
+  animation-name: bearWalk;
+  animation-duration: 0.4s;
+  animation-iteration-count: 1;
+  /*animation-iteration-count: infinite;*/
+}
+
+/*@keyframes bearWalk {
+  15%{
+    transform: rotate(10deg);
+  }
+  35%{
+    transform: rotate(-10deg);
+  }
+  70%{
+    transform: translate(-58px);
+  }
+}*/
+
+@keyframes toLeft {
+  15%{
+    transform: rotate(10deg);
+  }
+  35%{
+    transform: rotate(-10deg);
+  }
+  70%{
+    transform: translate(-58px);
+  }
+}
+
+@keyframes toRight {
+  15%{
+    transform: rotate(10deg);
+  }
+  35%{
+    transform: rotate(-10deg);
+  }
+  70%{
+    transform: translate(58px);
+  }
+}
+
+@keyframes toUp {
+  15%{
+    transform: rotate(10deg);
+  }
+  35%{
+    transform: rotate(-10deg);
+  }
+  70%{
+    transform: translateY(-58px);
+  }
+}
+
+@keyframes toDown {
+  15%{
+    transform: rotate(10deg);
+  }
+  35%{
+    transform: rotate(-10deg);
+  }
+  70%{
+    transform: translateY(58px);
+  }
+}
+
+.toLeft img {
+  /*transform: translate(-20px);*/
+  animation-name: toLeft;
+  /*animation-timing-function: ease-in-out;*/
+  animation-duration: 1.5s;
+  animation-iteration-count: 1;
+}
+
+.toRight img {
+  animation-name: toRight;
+  animation-duration: 1.5s;
+  animation-iteration-count: 1;
+}
+
+.toUp img {
+  animation-name: toUp;
+  animation-duration: 1.5s;
+  animation-iteration-count: 1;
+}
+
+.toDown img {
+  animation-name: toDown;
+  animation-duration: 1.5s;
+  animation-iteration-count: 1;
+}
+
+
+
+
+
+
+
+  /**/
