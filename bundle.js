@@ -70,7 +70,6 @@
 
 	'use strict';
 	
-	// const ImgConstants = require('./constants/img_constants');
 	var ImgValueConstants = __webpack_require__(2);
 	var InstructionConstants = __webpack_require__(3);
 	var Bear = __webpack_require__(4);
@@ -86,20 +85,18 @@
 	  //when cell is clicked, check if empty, then send cell to make move
 	  var that = this;
 	
-	  var currentImg = void 0;
 	  var clear = false;
+	
 	  $(".cell").hover(function (event) {
+	    var cellNo = parseInt($(event.currentTarget).attr("data-number"));
+	    var cellPos = [Math.floor(cellNo / 5), cellNo % 5];
 	    if ($(event.currentTarget).html() === "") {
 	
 	      $(event.currentTarget).addClass("zoom");
-	
 	      $(event.currentTarget).html(that.game.currentPiece.imgTag);
-	      currentImg = undefined;
-	
-	      var cellNo = parseInt($(event.currentTarget).attr("data-number"));
 	
 	      var currentVal = that.game.currentPiece.value;
-	      that.game.setAdjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
+	      that.game.setAdjacentMatchingPositions(cellPos, currentVal);
 	      while (!(that.game.currentPiece instanceof Bear) && that.game.multAdjacentsExist()) {
 	        currentVal++;
 	        that.game.adjacentsObj.top.forEach(function (adjacentPos) {
@@ -120,7 +117,8 @@
 	    } else {
 	      clear = false;
 	      //display the instructions for this piece from instruction constants
-	      $(".instructions").html(InstructionConstants[currentImg.slice(26, -7)]);
+	      var hoverPiece = that.game.getPiece(cellPos);
+	      $(".instructions").html(InstructionConstants[hoverPiece.type]);
 	    }
 	  }, function (event) {
 	    if (clear) {
@@ -133,7 +131,8 @@
 	
 	  $(".cell").on("click", function (event) {
 	    var cellNo = parseInt($(event.currentTarget).attr("data-number"));
-	    if (_this.game.board.grid[Math.floor(cellNo / 5)][cellNo % 5] === "") {
+	    var cellPos = [Math.floor(cellNo / 5), cellNo % 5];
+	    if (_this.game.board.grid[cellPos[0]][cellPos[1]] === "") {
 	      _this.makeMove($(event.currentTarget));
 	      // $(event.currentTarget).addClass("has-piece");
 	    }
@@ -150,8 +149,8 @@
 	
 	View.prototype.unbindClick = function () {
 	  $(".cell").off("click");
-	  // $(".cell").off("hovers");
 	  $(".hold").off("click");
+	  $(".cell").off("mouseenter mouseleave");
 	};
 	
 	View.prototype.makeMove = function ($cell) {
@@ -185,7 +184,9 @@
 	    $(".container").append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
 	    console.log("it's over. seriously.");
 	  } else {
-	    this.game.walkBears(this.updateBears.bind(that));
+	    if (this.game.bearsExist()) {
+	      this.game.walkBears(this.updateBears.bind(that));
+	    }
 	  }
 	};
 	
@@ -193,6 +194,7 @@
 	//add a class to all of the bears
 	//css transition
 	View.prototype.updateBears = function () {
+	  this.unbindClick(); //don't allow clicks while bears are walking!
 	  var that = this;
 	
 	  this.game.oldBears.forEach(function (changedPos, i) {
@@ -218,6 +220,7 @@
 	    $('.cell').removeClass("toLeft toRight toUp toDown zoom");
 	    // that.bindEvents();
 	
+	    that.bindEvents();
 	    clearTimeout(that.bearTimeout);
 	  }, 800);
 	
@@ -278,6 +281,11 @@
 	
 	  $container.append($("<div>").addClass("instructions"));
 	  $(".instructions").html("Hover over an object for instructions!");
+	
+	  this.$el.append($("<div>").addClass("instructions-box"));
+	  for (var _i = 0; _i < 6; _i++) {
+	    $(".instructions-box").append($("<p>").html());
+	  }
 	};
 	
 	module.exports = View;
@@ -429,7 +437,7 @@
 
 	'use strict';
 	
-	var ImgConstants = __webpack_require__(8);
+	var FrequencyConstants = __webpack_require__(10);
 	var ImgValueConstants = __webpack_require__(2);
 	var Board = __webpack_require__(9);
 	var Piece = __webpack_require__(5);
@@ -455,6 +463,14 @@
 	  this.score = 0;
 	  this.holdPiece = undefined;
 	}
+	
+	Game.prototype.getPiece = function (hoverCellPos) {
+	  return this.board.grid[hoverCellPos[0]][hoverCellPos[1]];
+	};
+	
+	Game.prototype.bearsExist = function () {
+	  return this.bears.length > 0;
+	};
 	
 	Game.prototype.playMove = function (clickedCellPos) {
 	  this.changed = [clickedCellPos];
@@ -487,12 +503,9 @@
 	  } else {
 	    this.currentPiece = this.giveCurrentPiece();
 	  }
-	
-	  // this.walkBears();
 	};
 	
 	Game.prototype.updateGrid = function (pos, piece) {
-	  // debugger
 	  this.board.grid[pos[0]][pos[1]] = piece;
 	  piece.pos = pos;
 	};
@@ -680,7 +693,7 @@
 	
 	Game.prototype.giveCurrentPiece = function () {
 	  //pick random piece (from: grass, bush, tree, hut, bear)
-	  var randomType = ImgConstants[Math.floor(Math.random() * (55 - 1) + 1)];
+	  var randomType = FrequencyConstants[Math.floor(Math.random() * (55 - 1) + 1)];
 	
 	  var randomCellNo = Math.floor(Math.random() * 25);
 	  // let pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
@@ -698,7 +711,7 @@
 	  var numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 	
 	  for (var i = 0; i < numPieces; i++) {
-	    var randomType = ImgConstants[Math.floor(Math.random() * (52 - 1) + 1)];
+	    var randomType = FrequencyConstants[Math.floor(Math.random() * (52 - 1) + 1)];
 	
 	    var randomCellNo = Math.floor(Math.random() * 25);
 	    var pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
@@ -741,14 +754,65 @@
 	module.exports = Game;
 
 /***/ },
-/* 8 */
+/* 8 */,
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	// const Piece = require('./piece');
+	
+	var Board = function Board() {
+	  this.grid = this.makeGrid();
+	};
+	
+	// Board.prototype.isWon = function () {
+	//
+	// };
+	
+	// Board.prototype.grid = function (pos) {
+	//   return this.grid[pos[0]][pos[1]];
+	// };
+	
+	Board.prototype.isFull = function () {
+	  for (var i = 0; i < 5; i++) {
+	    for (var j = 0; j < 5; j++) {
+	      if (this.grid[i][j] === "") {
+	        return false;
+	      }
+	    }
+	  }
+	
+	  return true;
+	};
+	
+	Board.prototype.makeGrid = function () {
+	  var grid = [];
+	  for (var i = 0; i < 5; i++) {
+	    grid.push([]);
+	    for (var j = 0; j < 5; j++) {
+	      grid[i].push("");
+	    }
+	  }
+	  return grid;
+	};
+	
+	// Board.prototype.placePiece = function (pos) {
+	//
+	// };
+	
+	
+	module.exports = Board;
+
+/***/ },
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
 	
 	//for initial setup (piece randomization)
 	
-	var ImgConstants = {
+	var FrequencyConstants = {
 	  1: "grass",
 	  2: "grass",
 	  3: "grass",
@@ -809,57 +873,7 @@
 	  54: "bear"
 	};
 	
-	module.exports = ImgConstants;
-
-/***/ },
-/* 9 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	// const Piece = require('./piece');
-	
-	var Board = function Board() {
-	  this.grid = this.makeGrid();
-	};
-	
-	// Board.prototype.isWon = function () {
-	//
-	// };
-	
-	// Board.prototype.grid = function (pos) {
-	//   return this.grid[pos[0]][pos[1]];
-	// };
-	
-	Board.prototype.isFull = function () {
-	  for (var i = 0; i < 5; i++) {
-	    for (var j = 0; j < 5; j++) {
-	      if (this.grid[i][j] === "") {
-	        return false;
-	      }
-	    }
-	  }
-	
-	  return true;
-	};
-	
-	Board.prototype.makeGrid = function () {
-	  var grid = [];
-	  for (var i = 0; i < 5; i++) {
-	    grid.push([]);
-	    for (var j = 0; j < 5; j++) {
-	      grid[i].push("");
-	    }
-	  }
-	  return grid;
-	};
-	
-	// Board.prototype.placePiece = function (pos) {
-	//
-	// };
-	
-	
-	module.exports = Board;
+	module.exports = FrequencyConstants;
 
 /***/ }
 /******/ ]);
