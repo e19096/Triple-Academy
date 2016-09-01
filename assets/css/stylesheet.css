@@ -1,6 +1,6 @@
 html {
-  /*background-color: #57924f;*/
-  background-color: #fafafa;
+  background-color: #a9dea9;
+  /*background-color: #fafafa;*/
   /*background-image: url('./trees2.png');*/
   background-size: 300px 100%;
 }
@@ -15,29 +15,13 @@ h1, figure, ul, li, p {
   text-align: center;
   padding: 0;
   margin: 0;
-  font-family: sans-serif;
+  /*font-family: sans-serif;*/
+  font-family: 'Hind', sans-serif;
   color: white;
 }
 
-/*.cute-bounce {
-  animation-name: cuteBounce;
-  animation-duration: 0.6s;
-  animation-iteration-count: 2;
-}
-
-@keyframes cuteBounce {
-  40%{
-    transform: translateY(18%);
-    transform: scaleY(1.5);
-  }
-  20%{
-    transform: translateY(12%);
-    transform: scaleY(1.2);
-  }
-}*/
-
 p {
-  color: lightgray;
+  color: #fafafa;
   font-size: 14px;
   font-weight: normal;
 }
@@ -49,6 +33,25 @@ h1 {
   font-weight: normal;
   letter-spacing: 1px;
   text-shadow: 1px 1px 5px black;
+}
+
+.my-links {
+  /*color: #40b540;*/
+  color: #636363;
+  /*font-family: 'Oxygen', sans-serif;*/
+  font-family: 'Hind', sans-serif;
+  /*font-family: 'Poiret One', sans-serif;*/
+  /*font-family: 'Quicksand', sans-serif;*/
+  padding: 5px;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.my-links:hover {
+  cursor: pointer;
+  /*color: #28dc28;*/
+  color: #1cbd1c;
+  transition: 1s;
 }
 
 .ta img {
@@ -67,37 +70,38 @@ h1 {
   height: 375px;
   padding: 20px;
   margin-bottom: 25px;
-  background-color: #ffa1a1;
+  /*background-color: #ffa1a1;*/
+  background-color: #4c4c4c;
   border-radius: 5px;
 }
 
-.ta ul {
-  float: left;
-  list-style: none;
-  width: 285px;
-  height: 285px;
-  border: 10px solid #a5918b;
-  border-radius: 5px;
-  border-style: outset;
-  background-color: #83b383;
-  margin: 5px;
-}
+  .ta ul {
+    float: left;
+    list-style: none;
+    width: 285px;
+    height: 285px;
+    border: 10px solid #92896d;
+    border-radius: 5px;
+    border-style: outset;
+    background-color: #dacfab;
+    margin: 5px;
+  }
 
-.ta li {
-  float: left;
-  width: 55px;
-  height: 55px;
-  border: 1px solid transparent;
-  background: transparent;
-  border-radius: 5px;
-  object-fit: cover;
+    .ta li {
+      float: left;
+      width: 55px;
+      height: 55px;
+      border: 1px solid transparent;
+      background: transparent;
+      border-radius: 5px;
+      object-fit: cover;
 
-}
+    }
 
-.ta li:hover {
-  cursor: pointer;
-  opacity: 0.8;
-}
+    .ta li:hover {
+      cursor: pointer;
+      opacity: 0.8;
+    }
 
 .ta .has-piece {
   background-color: #31c331;
@@ -231,6 +235,10 @@ h1 {
   text-shadow: 1px 1px 5px black;
 }
 
+.ta .current-piece > p {
+  font-family: 'Baloo Da', sans-serif;
+}
+
 .ta .hold {
   width: 69px;
   height: 69px;
@@ -238,7 +246,8 @@ h1 {
   border-radius: 50px;
   margin-left: 15px;
   margin-top: 10px;
-  background-color: #dbca93;
+  margin-bottom: 12px;
+  background-color: #dacfab;
   display: inline-block;
   font-family: 'Baloo Da', sans-serif;
   letter-spacing: 1px;
@@ -282,8 +291,8 @@ h1 {
   color: pink;
   font-size: 75px;
   font-family: 'Baloo Da', sans-serif;
-  opacity: none;
   padding: 0;
+  margin-top: -35px;
 }
 
 .game-won img, .game-won h1, .game-won p {
@@ -296,16 +305,15 @@ h1 {
   position: absolute;
   height: 40px;
   width: 265px;
-  margin-top: 30px;
+  margin-top: 15px;
   margin-left: 20px;
   border-radius: 5px;
   text-align: center;
   font-size: 14px;
   vertical-align: center;
   font-family: "Baloo Da", sans-serif;
-  color: white;
+  color: #fafafa;
   letter-spacing: 0.5px;
-  font-weight: lighter;
 }
 
 .instructions > div {
@@ -319,7 +327,6 @@ h1 {
 
 .instructions > div .bear-instr {
   font-family: sans-serif;
-
 }
 
 .instructions > div > img {
@@ -333,20 +340,7 @@ h1 {
   animation-name: bearWalk;
   animation-duration: 0.4s;
   animation-iteration-count: 1;
-  /*animation-iteration-count: infinite;*/
 }
-
-/*@keyframes bearWalk {
-  15%{
-    transform: rotate(10deg);
-  }
-  35%{
-    transform: rotate(-10deg);
-  }
-  70%{
-    transform: translate(-58px);
-  }
-}*/
 
 @keyframes toLeft {
   15%{
@@ -397,9 +391,7 @@ h1 {
 }
 
 .toLeft img {
-  /*transform: translate(-20px);*/
   animation-name: toLeft;
-  /*animation-timing-function: ease-in-out;*/
   animation-duration: 1.5s;
   animation-iteration-count: 1;
 }

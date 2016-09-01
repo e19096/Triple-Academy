@@ -50,13 +50,11 @@
 	var Game = __webpack_require__(7);
 	
 	$(function () {
-	  // $('.title').addClass('cute-bounce');
 	
 	  var $rootEl = $('.ta');
 	
 	  // $playButton = $("<button>").addClass("play-button").html("Start!");
 	  // $rootEl.append($playButton);
-	
 	
 	  var game = new Game();
 	  var view = new View(game, $rootEl);
@@ -162,7 +160,6 @@
 	  //then render new board
 	  var that = this;
 	  this.game.changed.forEach(function (changedPos) {
-	    // debugger
 	    var changedCellNo = changedPos[0] * 5 + changedPos[1];
 	    $('.cell[data-number=' + changedCellNo + ']').html(that.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? that.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
 	  });
@@ -177,7 +174,7 @@
 	    this.$el.addClass("game-won");
 	    console.log("you did it, really. good work.");
 	    $(".cell").html(ImgValueConstants[7]);
-	    $(".current-piece").html("<p>EXPECTED BEHAVIOR!!!</p>");
+	    $(".current-piece").html("<p>YAY!!!</p>");
 	  } else if (this.game.isOver()) {
 	    this.unbindClick();
 	    this.$el.addClass("game-over");
@@ -190,9 +187,6 @@
 	  }
 	};
 	
-	//set a timeout before rendering new bears
-	//add a class to all of the bears
-	//css transition
 	View.prototype.updateBears = function () {
 	  this.unbindClick(); //don't allow clicks while bears are walking!
 	  var that = this;
@@ -206,7 +200,6 @@
 	  });
 	  this.game.newBears.forEach(function (changedPos) {
 	    var changedCellNo = changedPos[0] * 5 + changedPos[1];
-	    // $(`.cell[data-number=${changedCellNo}]`).off('click');
 	    $('.cell[data-number=' + changedCellNo + ']').off('hover');
 	  });
 	
@@ -218,13 +211,10 @@
 	      $('.cell[data-number=' + changedCellNo + ']').html(that.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? that.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
 	    });
 	    $('.cell').removeClass("toLeft toRight toUp toDown zoom");
-	    // that.bindEvents();
 	
 	    that.bindEvents();
 	    clearTimeout(that.bearTimeout);
 	  }, 800);
-	
-	  //clear timeout
 	};
 	
 	View.prototype.movementClass = function (idx) {
@@ -342,9 +332,10 @@
 	  "grass": "<div>" + ImgValueConstants[1] + " + " + ImgValueConstants[1] + " + " + ImgValueConstants[1] + " = " + ImgValueConstants[2] + "</div>",
 	  "bush": "<div>" + ImgValueConstants[2] + " + " + ImgValueConstants[2] + " + " + ImgValueConstants[2] + " = " + ImgValueConstants[3] + "</div>",
 	  "tree": "<div>" + ImgValueConstants[3] + " + " + ImgValueConstants[3] + " + " + ImgValueConstants[3] + " = " + ImgValueConstants[4] + "</div>",
-	  "hut": "<div>" + ImgValueConstants[4] + " + " + ImgValueConstants[4] + " + " + ImgValueConstants[4] + " = " + ImgValueConstants[5] + "</div>",
-	  "house": "<div>" + ImgValueConstants[5] + " + " + ImgValueConstants[5] + " + " + ImgValueConstants[5] + " =  YOU WIN!!!</div>",
-	  "bear": "<div class=\"bear-instr\">Yeah, bears just like walk around and get in your way...</div>"
+	  // "hut"   : `<div>${ImgValueConstants[4]} + ${ImgValueConstants[4]} + ${ImgValueConstants[4]} = ${ImgValueConstants[5]}</div>`,
+	  "hut": "<div>" + ImgValueConstants[4] + " + " + ImgValueConstants[4] + " + " + ImgValueConstants[4] + " =   YOU WIN!!!</div>",
+	  // "house" : `<div>${ImgValueConstants[5]} + ${ImgValueConstants[5]} + ${ImgValueConstants[5]} =  YOU WIN!!!</div>`,
+	  "bear": "<div class=\"bear-instr\">Bears just walk around and get in your way!</div>"
 	  // mansion: `${ImgValueConstants[1]} + ${ImgValueConstants[1]} + ${ImgValueConstants[1]} = ${ImgValueConstants[1]}`,
 	  // castle: `${ImgValueConstants[1]} + ${ImgValueConstants[1]} + ${ImgValueConstants[1]} = ${ImgValueConstants[1]}`
 	};
@@ -368,7 +359,7 @@
 	
 	Bear.prototype.walk = function (adjacentEmptyPositions) {
 	  //find adjacent empty spaces... or get them from game?
-	  //pic a random one to walk to
+	  //pick a random one to walk to
 	  var n = Math.floor(Math.random() * adjacentEmptyPositions.length);
 	  //update bear's pos and cell No
 	  this.pos = adjacentEmptyPositions[n];
@@ -389,26 +380,15 @@
 	var Piece = function Piece(type, cellPos) {
 	  this.type = type;
 	
-	  this.pos = cellPos; //[row, col]
-	  // this.cellNo = cellPos[0] * 5 + cellPos[1];
+	  this.pos = cellPos;
 	
 	  this.value = ImgValueConstants[type];
 	
 	  this.imgTag = ImgValueConstants[this.value];
-	  // debugger
 	};
 	
 	Piece.prototype.getCellNo = function () {
 	  return this.pos[0] * 5 + this.pos[1];
-	};
-	
-	// Piece.prototype.render = function () {
-	//   return this.imgTag; //or call this getImg()
-	// };
-	
-	Piece.prototype.combine = function () {
-	  //this should take care of the logic of becoming the next level object...
-	  //bear will rewrite this
 	};
 	
 	module.exports = Piece;
@@ -437,7 +417,7 @@
 
 	'use strict';
 	
-	var FrequencyConstants = __webpack_require__(10);
+	var FrequencyConstants = __webpack_require__(8);
 	var ImgValueConstants = __webpack_require__(2);
 	var Board = __webpack_require__(9);
 	var Piece = __webpack_require__(5);
@@ -489,7 +469,8 @@
 	      var biggerPiece = this.combine(clickedCellPos); //combine them
 	      this.score += biggerPiece.value;
 	
-	      if (biggerPiece.value === 6) {
+	      if (biggerPiece.value === 5) {
+	        //house to win
 	        console.log("YOU WIN!!!!!!!! YAAAAAYYYYYYY");
 	        this.won = true;
 	      }
@@ -555,10 +536,6 @@
 	    }
 	  });
 	
-	  // console.log(this.oldBears);
-	  // console.log(this.newBears);
-	  // console.log(this.bears);
-	  // console.log(this.board.grid);
 	  updateBears();
 	};
 	
@@ -693,7 +670,7 @@
 	
 	Game.prototype.giveCurrentPiece = function () {
 	  //pick random piece (from: grass, bush, tree, hut, bear)
-	  var randomType = FrequencyConstants[Math.floor(Math.random() * (55 - 1) + 1)];
+	  var randomType = FrequencyConstants[Math.floor(Math.random() * (74 - 1) + 1)];
 	
 	  var randomCellNo = Math.floor(Math.random() * 25);
 	  // let pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
@@ -754,58 +731,7 @@
 	module.exports = Game;
 
 /***/ },
-/* 8 */,
-/* 9 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	// const Piece = require('./piece');
-	
-	var Board = function Board() {
-	  this.grid = this.makeGrid();
-	};
-	
-	// Board.prototype.isWon = function () {
-	//
-	// };
-	
-	// Board.prototype.grid = function (pos) {
-	//   return this.grid[pos[0]][pos[1]];
-	// };
-	
-	Board.prototype.isFull = function () {
-	  for (var i = 0; i < 5; i++) {
-	    for (var j = 0; j < 5; j++) {
-	      if (this.grid[i][j] === "") {
-	        return false;
-	      }
-	    }
-	  }
-	
-	  return true;
-	};
-	
-	Board.prototype.makeGrid = function () {
-	  var grid = [];
-	  for (var i = 0; i < 5; i++) {
-	    grid.push([]);
-	    for (var j = 0; j < 5; j++) {
-	      grid[i].push("");
-	    }
-	  }
-	  return grid;
-	};
-	
-	// Board.prototype.placePiece = function (pos) {
-	//
-	// };
-	
-	
-	module.exports = Board;
-
-/***/ },
-/* 10 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -843,11 +769,12 @@
 	  28: "grass",
 	  29: "grass",
 	  30: "grass",
-	  31: "grass",
-	  32: "grass",
-	  33: "grass",
-	  34: "grass",
-	  35: "grass",
+	
+	  31: "bush",
+	  32: "bush",
+	  33: "bush",
+	  34: "bush",
+	  35: "bush",
 	
 	  36: "bush",
 	  37: "bush",
@@ -859,21 +786,80 @@
 	  43: "bush",
 	  44: "bush",
 	  45: "bush",
-	  46: "bush",
-	  47: "bush",
-	  48: "bush",
+	
+	  46: "tree",
+	  47: "tree",
+	  48: "tree",
 	
 	  49: "tree",
 	  50: "tree",
 	
 	  51: "hut",
 	
-	  52: "bear",
-	  53: "bear",
-	  54: "bear"
+	  //^^ for initial setup
+	  //vv for pieces given
+	
+	  52: "tree",
+	  53: "tree",
+	  54: "hut",
+	
+	  55: "hut",
+	  56: "hut",
+	  57: "bear",
+	  58: "bear",
+	  59: "bear",
+	  60: "bear",
+	  61: "bear",
+	  62: "bear",
+	  63: "bear",
+	  64: "bear",
+	  65: "bear",
+	  66: "bear",
+	  67: "bear",
+	  68: "bear",
+	  69: "bear",
+	  70: "bear",
+	  71: "bear",
+	  72: "bear",
+	  73: "bear"
 	};
 	
 	module.exports = FrequencyConstants;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var Board = function Board() {
+	  this.grid = this.makeGrid();
+	};
+	
+	Board.prototype.isFull = function () {
+	  for (var i = 0; i < 5; i++) {
+	    for (var j = 0; j < 5; j++) {
+	      if (this.grid[i][j] === "") {
+	        return false;
+	      }
+	    }
+	  }
+	
+	  return true;
+	};
+	
+	Board.prototype.makeGrid = function () {
+	  var grid = [];
+	  for (var i = 0; i < 5; i++) {
+	    grid.push([]);
+	    for (var j = 0; j < 5; j++) {
+	      grid[i].push("");
+	    }
+	  }
+	  return grid;
+	};
+	
+	module.exports = Board;
 
 /***/ }
 /******/ ]);

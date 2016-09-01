@@ -39,8 +39,10 @@ Triple Academy is a puzzle game in which the player matches objects in groups of
 
 ![gif of the magic2](./docs/screenshots/bounce2.gif)
 
+### Bears!
+* Bears are instances of a child class of Piece. They behave a little differently, in that three adjacent bears don't combine into an object of the next tier. Also--and this is important--they don't stay in one place. Each turn, bears that have empty spaces next to them will choose one at random to "walk" into.
+
 ##Features to come
-* Bears! These are special objects that can move around the board. They will be a child class of Piece, with a special "walk" function.
 * Saving the current object for later/swapping objects (like in tetris)
 * Other special objects--crystal (wildcard, combines any matching 2+ objects into the next tier), bot (removes a piece from the board)
 * Scoring
