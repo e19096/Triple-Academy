@@ -78,69 +78,67 @@
 	};
 	
 	View.prototype.bindEvents = function () {
-	  var _this = this;
+	  var _this2 = this;
 	
 	  //when cell is clicked, check if empty, then send cell to make move
-	  var that = this;
-	
 	  var clear = false;
 	
 	  $(".cell").hover(function (event) {
+	    var _this = this;
+	
 	    var cellNo = parseInt($(event.currentTarget).attr("data-number"));
 	    var cellPos = [Math.floor(cellNo / 5), cellNo % 5];
+	
 	    if ($(event.currentTarget).html() === "") {
 	
 	      $(event.currentTarget).addClass("zoom");
-	      $(event.currentTarget).html(that.game.currentPiece.imgTag);
+	      $(event.currentTarget).html(this.game.currentPiece.imgTag);
 	
-	      var currentVal = that.game.currentPiece.value;
-	      that.game.setAdjacentMatchingPositions(cellPos, currentVal);
-	      while (!(that.game.currentPiece instanceof Bear) && that.game.multAdjacentsExist()) {
+	      var currentVal = this.game.currentPiece.value;
+	      this.game.setAdjacentMatchingPositions(cellPos, currentVal);
+	      while (!(this.game.currentPiece instanceof Bear) && this.game.multAdjacentsExist()) {
 	        currentVal++;
-	        that.game.adjacentsObj.top.forEach(function (adjacentPos) {
-	          $('.cell[data-number=' + (adjacentPos[0] * 5 + adjacentPos[1]) + ']').addClass("bounce-down");
-	        });
-	        that.game.adjacentsObj.bottom.forEach(function (adjacentPos) {
-	          $('.cell[data-number=' + (adjacentPos[0] * 5 + adjacentPos[1]) + ']').addClass("bounce-up");
-	        });
-	        that.game.adjacentsObj.left.forEach(function (adjacentPos) {
-	          $('.cell[data-number=' + (adjacentPos[0] * 5 + adjacentPos[1]) + ']').addClass("bounce-right");
-	        });
-	        that.game.adjacentsObj.right.forEach(function (adjacentPos) {
-	          $('.cell[data-number=' + (adjacentPos[0] * 5 + adjacentPos[1]) + ']').addClass("bounce-left");
-	        });
-	        that.game.setAdjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
+	
+	        var _loop = function _loop(dir) {
+	          _this.game.adjacentsObj[dir].forEach(function (pos) {
+	            $('.cell[data-number=' + (pos[0] * 5 + pos[1]) + ']').addClass(dir + '-bounce');
+	          });
+	        };
+	
+	        for (var dir in this.game.adjacentsObj) {
+	          _loop(dir);
+	        }
+	        this.game.setAdjacentMatchingPositions([Math.floor(cellNo / 5), cellNo % 5], currentVal);
 	      }
 	      clear = true;
 	    } else {
 	      clear = false;
 	      //display the instructions for this piece from instruction constants
-	      var hoverPiece = that.game.getPiece(cellPos);
+	      var hoverPiece = this.game.getPiece(cellPos);
 	      $(".instructions").html(InstructionConstants[hoverPiece.type]);
 	    }
-	  }, function (event) {
+	  }.bind(this), function (event) {
 	    if (clear) {
 	      $(event.currentTarget).html("");
 	    }
 	
-	    $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left");
+	    $(".cell").removeClass("top-bounce bottom-bounce left-bounce right-bounce");
 	    $(".instructions").html("Hover over an object for instructions!");
 	  });
 	
 	  $(".cell").on("click", function (event) {
 	    var cellNo = parseInt($(event.currentTarget).attr("data-number"));
 	    var cellPos = [Math.floor(cellNo / 5), cellNo % 5];
-	    if (_this.game.board.grid[cellPos[0]][cellPos[1]] === "") {
-	      _this.makeMove($(event.currentTarget));
-	      // $(event.currentTarget).addClass("has-piece");
+	    if (_this2.game.board.grid[cellPos[0]][cellPos[1]] === "") {
+	      _this2.makeMove($(event.currentTarget));
 	    }
 	    $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left zoom");
 	  });
 	
 	  $(".hold").on("click", function (event) {
-	    _this.game.swapHoldPiece(function () {
-	      $('.current-piece').html("next:" + that.game.currentPiece.imgTag);
-	      $('.hold').html("hold:" + that.game.holdPiece.imgTag);
+	    _this2.game.swapHoldPiece(function () {
+	      $('.current-piece').html("next:" + _this2.game.currentPiece.imgTag);
+	      $('.hold').html("hold:" + _this2.game.holdPiece.imgTag);
 	    });
 	  });
 	};
@@ -152,16 +150,16 @@
 	};
 	
 	View.prototype.makeMove = function ($cell) {
+	  var _this3 = this;
 	
 	  var cellNo = parseInt($cell.attr("data-number"));
 	  var cellPos = [Math.floor(cellNo / 5), cellNo % 5];
 	
 	  this.game.playMove(cellPos);
 	  //then render new board
-	  var that = this;
 	  this.game.changed.forEach(function (changedPos) {
 	    var changedCellNo = changedPos[0] * 5 + changedPos[1];
-	    $('.cell[data-number=' + changedCellNo + ']').html(that.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? that.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
+	    $('.cell[data-number=' + changedCellNo + ']').html(_this3.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? _this3.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
 	  });
 	
 	  //also render new current piece
@@ -182,20 +180,20 @@
 	    console.log("it's over. seriously.");
 	  } else {
 	    if (this.game.bearsExist()) {
-	      this.game.walkBears(this.updateBears.bind(that));
+	      this.game.walkBears(this.updateBears.bind(this));
 	    }
 	  }
 	};
 	
 	View.prototype.updateBears = function () {
+	  var _this4 = this;
+	
 	  this.unbindClick(); //don't allow clicks while bears are walking!
-	  var that = this;
 	
 	  this.game.oldBears.forEach(function (changedPos, i) {
 	    var changedCellNo = changedPos[0] * 5 + changedPos[1];
-	    $('.cell[data-number=' + changedCellNo + ']').addClass('' + that.movementClass(i));
+	    $('.cell[data-number=' + changedCellNo + ']').addClass('' + _this4.movementClass(i));
 	    $('.cell[data-number=' + changedCellNo + ']').off('hover');
-	
 	    //use index no to index into newbears to see what direction they are moving in
 	  });
 	  this.game.newBears.forEach(function (changedPos) {
@@ -205,15 +203,15 @@
 	
 	  //add class to bears to bounce
 	  this.bearTimeout = setTimeout(function () {
-	    var bearArr = that.game.newBears.concat(that.game.oldBears);
+	    var bearArr = _this4.game.newBears.concat(_this4.game.oldBears);
 	    bearArr.forEach(function (changedPos) {
 	      var changedCellNo = changedPos[0] * 5 + changedPos[1];
-	      $('.cell[data-number=' + changedCellNo + ']').html(that.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? that.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
+	      $('.cell[data-number=' + changedCellNo + ']').html(_this4.game.board.grid[changedPos[0]][changedPos[1]].imgTag ? _this4.game.board.grid[changedPos[0]][changedPos[1]].imgTag : "");
 	    });
 	    $('.cell').removeClass("toLeft toRight toUp toDown zoom");
 	
-	    that.bindEvents();
-	    clearTimeout(that.bearTimeout);
+	    _this4.bindEvents();
+	    clearTimeout(_this4.bearTimeout);
 	  }, 800);
 	};
 	
@@ -332,9 +330,9 @@
 	  "grass": "<div>" + ImgValueConstants[1] + " + " + ImgValueConstants[1] + " + " + ImgValueConstants[1] + " = " + ImgValueConstants[2] + "</div>",
 	  "bush": "<div>" + ImgValueConstants[2] + " + " + ImgValueConstants[2] + " + " + ImgValueConstants[2] + " = " + ImgValueConstants[3] + "</div>",
 	  "tree": "<div>" + ImgValueConstants[3] + " + " + ImgValueConstants[3] + " + " + ImgValueConstants[3] + " = " + ImgValueConstants[4] + "</div>",
-	  // "hut"   : `<div>${ImgValueConstants[4]} + ${ImgValueConstants[4]} + ${ImgValueConstants[4]} = ${ImgValueConstants[5]}</div>`,
-	  "hut": "<div>" + ImgValueConstants[4] + " + " + ImgValueConstants[4] + " + " + ImgValueConstants[4] + " =   YOU WIN!!!</div>",
-	  // "house" : `<div>${ImgValueConstants[5]} + ${ImgValueConstants[5]} + ${ImgValueConstants[5]} =  YOU WIN!!!</div>`,
+	  "hut": "<div>" + ImgValueConstants[4] + " + " + ImgValueConstants[4] + " + " + ImgValueConstants[4] + " = " + ImgValueConstants[5] + "</div>",
+	  // "hut"   : `<div>${ImgValueConstants[4]} + ${ImgValueConstants[4]} + ${ImgValueConstants[4]} =   YOU WIN!!!</div>`,
+	  "house": "<div>" + ImgValueConstants[5] + " + " + ImgValueConstants[5] + " + " + ImgValueConstants[5] + " =  YOU WIN!!!</div>",
 	  "bear": "<div class=\"bear-instr\">Bears just walk around and get in your way!</div>"
 	  // mansion: `${ImgValueConstants[1]} + ${ImgValueConstants[1]} + ${ImgValueConstants[1]} = ${ImgValueConstants[1]}`,
 	  // castle: `${ImgValueConstants[1]} + ${ImgValueConstants[1]} + ${ImgValueConstants[1]} = ${ImgValueConstants[1]}`
@@ -469,8 +467,8 @@
 	      var biggerPiece = this.combine(clickedCellPos); //combine them
 	      this.score += biggerPiece.value;
 	
-	      if (biggerPiece.value === 5) {
-	        //house to win
+	      if (biggerPiece.value === 6) {
+	        //mansion to win
 	        console.log("YOU WIN!!!!!!!! YAAAAAYYYYYYY");
 	        this.won = true;
 	      }
@@ -554,116 +552,72 @@
 	};
 	
 	Game.prototype.setAdjacentMatchingPositions = function (gridPos, pieceValue, reset) {
+	  var _this = this;
 	
 	  this.emptyAdjacentsObj(); //empty the arrays
 	
-	  var row = gridPos[0];
-	  var col = gridPos[1];
+	  var currentRow = gridPos[0];
+	  var currentCol = gridPos[1];
 	
 	  if (!pieceValue) {
 	    //pieceValue is a string
 	    pieceValue = this.currentPiece.value;
 	  }
 	
-	  var topPos = [row - 1, col]; //check all adjacent cells to check if same piece
-	  var bottomPos = [row + 1, col];
-	  var leftPos = [row, col - 1];
-	  var rightPos = [row, col + 1];
+	  var board = this.board;
 	
-	  //if not top row
-	  if (row > 0 && this.board.grid[topPos[0]][topPos[1]].value === pieceValue) {
-	    //top
-	    this.adjacentsObj.top.push(topPos);
-	    if (topPos[0] > 0 && this.board.grid[topPos[0] - 1][topPos[1]].value === pieceValue) {
-	      //top
-	      this.adjacentsObj.top.push([topPos[0] - 1, topPos[1]]);
+	  var isMatching = function isMatching(pos) {
+	    if (board.isValidGridPos(pos)) {
+	      return board.grid[pos[0]][pos[1]].value === pieceValue;
+	    } else {
+	      return false;
 	    }
-	    if (topPos[1] % 5 > 0 && this.board.grid[topPos[0]][topPos[1] - 1].value === pieceValue) {
-	      //left
-	      this.adjacentsObj.top.push([topPos[0], topPos[1] - 1]);
-	      this.adjacentsObj.left.push([topPos[0], topPos[1] - 1]);
-	    }
-	    if (topPos[1] % 5 < 4 && this.board.grid[topPos[0]][topPos[1] + 1].value === pieceValue) {
-	      //right
-	      this.adjacentsObj.top.push([topPos[0], topPos[1] + 1]);
-	      this.adjacentsObj.right.push([topPos[0], topPos[1] + 1]);
-	    }
-	  }
+	  };
 	
-	  //if not bottom row
-	  if (row < 4 && this.board.grid[bottomPos[0]][bottomPos[1]].value === pieceValue) {
-	    //bottom
-	    this.adjacentsObj.bottom.push(bottomPos);
-	    if (bottomPos[0] < 4 && this.board.grid[bottomPos[0] + 1][bottomPos[1]].value === pieceValue) {
-	      //bottom
-	      this.adjacentsObj.bottom.push([bottomPos[0] + 1, bottomPos[1]]);
+	  var storePos = function storePos(directions, pos) {
+	    if (!Array.isArray(directions)) {
+	      directions = [directions];
 	    }
-	    if (bottomPos[1] % 5 > 0 && this.board.grid[bottomPos[0]][bottomPos[1] - 1].value === pieceValue) {
-	      //left
-	      this.adjacentsObj.bottom.push([bottomPos[0], bottomPos[1] - 1]);
-	      this.adjacentsObj.left.push([bottomPos[0], bottomPos[1] - 1]);
-	    }
-	    if (bottomPos[1] % 5 < 4 && this.board.grid[bottomPos[0]][bottomPos[1] + 1].value === pieceValue) {
-	      //right
-	      this.adjacentsObj.bottom.push([bottomPos[0], bottomPos[1] + 1]);
-	      this.adjacentsObj.right.push([bottomPos[0], bottomPos[1] + 1]);
-	    }
-	  }
+	    directions.forEach(function (dir) {
+	      _this.adjacentsObj[dir].push(pos);
+	    });
+	  };
 	
-	  //if not left-most col
-	  if (col % 5 > 0 && this.board.grid[leftPos[0]][leftPos[1]].value === pieceValue) {
-	    //left
-	    this.adjacentsObj.left.push(leftPos);
-	    if (leftPos[0] > 0 && this.board.grid[leftPos[0] - 1][leftPos[1]].value === pieceValue) {
-	      //top
-	      this.adjacentsObj.left.push([leftPos[0] - 1, leftPos[1]]);
-	      this.adjacentsObj.top.push([leftPos[0] - 1, leftPos[1]]);
-	    }
-	    if (leftPos[0] < 4 && this.board.grid[leftPos[0] + 1][leftPos[1]].value === pieceValue) {
-	      //bottom
-	      this.adjacentsObj.left.push([leftPos[0] + 1, leftPos[1]]);
-	      this.adjacentsObj.bottom.push([leftPos[0] + 1, leftPos[1]]);
-	    }
-	    if (leftPos[1] % 5 > 0 && this.board.grid[leftPos[0]][leftPos[1] - 1].value === pieceValue) {
-	      //left
-	      this.adjacentsObj.left.push([leftPos[0], leftPos[1] - 1]);
-	    }
-	  }
+	  var DIRECTIONS = {
+	    'top': [-1, 0],
+	    'bottom': [1, 0],
+	    'left': [0, -1],
+	    'right': [0, 1]
+	  };
 	
-	  //if not right-most col
-	  if (col % 5 < 4 && this.board.grid[rightPos[0]][rightPos[1]].value === pieceValue) {
-	    //right
-	    this.adjacentsObj.right.push(rightPos);
-	    if (rightPos[0] > 0 && this.board.grid[rightPos[0] - 1][rightPos[1]].value === pieceValue) {
-	      //top
-	      this.adjacentsObj.right.push([rightPos[0] - 1, rightPos[1]]);
-	      this.adjacentsObj.top.push([rightPos[0] - 1, rightPos[1]]);
-	    }
-	    if (rightPos[0] < 4 && this.board.grid[rightPos[0] + 1][rightPos[1]].value === pieceValue) {
-	      //bottom
-	      this.adjacentsObj.right.push([rightPos[0] + 1, rightPos[1]]);
-	      this.adjacentsObj.bottom.push([rightPos[0] + 1, rightPos[1]]);
-	    }
-	    if (rightPos[1] % 5 < 4 && this.board.grid[rightPos[0]][rightPos[1] + 1].value === pieceValue) {
-	      //right
-	      this.adjacentsObj.right.push([rightPos[0], rightPos[1] + 1]);
+	  for (var dir in DIRECTIONS) {
+	    var pos = [currentRow + DIRECTIONS[dir][0], currentCol + DIRECTIONS[dir][1]];
+	    if (isMatching(pos)) {
+	      storePos(dir, pos);
+	      for (var dir2 in DIRECTIONS) {
+	        var pos2 = [pos[0] + DIRECTIONS[dir2][0], pos[1] + DIRECTIONS[dir2][1]];
+	        if (!(pos2[0] === currentRow && pos2[1] === currentCol) && isMatching(pos2)) {
+	          storePos([dir, dir2], pos2);
+	        }
+	      }
 	    }
 	  }
 	};
 	
 	Game.prototype.combine = function (cellPos, adjacentPositions) {
-	  var that = this;
+	  var _this2 = this;
 	
+	  var grid = this.board.grid;
 	  for (var direction in this.adjacentsObj) {
-	    that.adjacentsObj[direction].forEach(function (pos) {
-	      that.board.grid[pos[0]][pos[1]] = "";
-	      that.changed.push(pos);
+	    this.adjacentsObj[direction].forEach(function (pos) {
+	      grid[pos[0]][pos[1]] = "";
+	      _this2.changed.push(pos);
 	    });
 	  }
 	
-	  var newValue = this.board.grid[cellPos[0]][cellPos[1]].value + 1;
+	  var newValue = grid[cellPos[0]][cellPos[1]].value + 1;
 	  var biggerPiece = new Piece(ImgValueConstants[newValue].slice(26, -7), cellPos);
-	  this.board.grid[cellPos[0]][cellPos[1]] = biggerPiece;
+	  grid[cellPos[0]][cellPos[1]] = biggerPiece;
 	
 	  return biggerPiece;
 	};
@@ -671,14 +625,12 @@
 	Game.prototype.giveCurrentPiece = function () {
 	  //pick random piece (from: grass, bush, tree, hut, bear)
 	  var randomType = FrequencyConstants[Math.floor(Math.random() * (74 - 1) + 1)];
-	
 	  var randomCellNo = Math.floor(Math.random() * 25);
-	  // let pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
 	
 	  if (randomType === "bear") {
-	    return new Bear(); //pos);
+	    return new Bear();
 	  } else {
-	    return new Piece(randomType); //, pos);
+	    return new Piece(randomType);
 	  }
 	};
 	
@@ -698,8 +650,6 @@
 	    while (this.board.grid[pos[0]][pos[1]] !== "") {
 	      randomCellNo = Math.floor(Math.random() * 25);
 	      pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
-	
-	      //also check adjacents in here?
 	    }
 	
 	    this.setAdjacentMatchingPositions(pos, ImgValueConstants[randomType]);
@@ -832,6 +782,8 @@
 
 	"use strict";
 	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
 	var Board = function Board() {
 	  this.grid = this.makeGrid();
 	};
@@ -857,6 +809,19 @@
 	    }
 	  }
 	  return grid;
+	};
+	
+	Board.prototype.isValidGridPos = function (pos) {
+	  var _pos = _slicedToArray(pos, 2);
+	
+	  var row = _pos[0];
+	  var col = _pos[1];
+	
+	  if (row >= 0 && row < 5 && col >= 0 && col < 5) {
+	    return true;
+	  } else {
+	    return false;
+	  }
 	};
 	
 	module.exports = Board;

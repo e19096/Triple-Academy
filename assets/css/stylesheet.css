@@ -1,3 +1,26 @@
+@import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,900");
+@import url("font-awesome.min.css");
+
+.icon {
+  text-decoration: none;
+}
+
+  .icon:before {
+    display: inline-block;
+    font-family: FontAwesome;
+    font-size: 1.25em;
+    text-decoration: none;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .icon > .label {
+    display: none;
+  }
+
 html {
   background-color: #a9dea9;
   /*background-color: #fafafa;*/
@@ -108,50 +131,49 @@ h1 {
   border-radius: 10px;
 }
 
-.ta .bounce-up img {
-  /*transition: all .2s ease-in-out;*/
+.ta .bottom-bounce img {
   animation-name: bounceUp;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .bounce-down img {
+.ta .top-bounce img {
   animation-name: bounceDown;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .bounce-left img {
+.ta .right-bounce img {
   animation-name: bounceLeft;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .bounce-right img {
+.ta .left-bounce img {
   animation-name: bounceRight;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .bounce-up.bounce-right img {
+.ta .bottom-bounce.left-bounce img {
   animation-name: bounceUpRight;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .bounce-down.bounce-right img {
+.ta .top-bounce.left-bounce img {
   animation-name: bounceDownRight;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .bounce-up.bounce-left img {
+.ta .bottom-bounce.right-bounce img {
   animation-name: bounceUpLeft;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .bounce-down.bounce-left img {
+.ta .top-bounce.right-bounce img {
   animation-name: bounceDownLeft;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
@@ -392,25 +414,25 @@ h1 {
 
 .toLeft img {
   animation-name: toLeft;
-  animation-duration: 1.5s;
+  animation-duration: 1.45s;
   animation-iteration-count: 1;
 }
 
 .toRight img {
   animation-name: toRight;
-  animation-duration: 1.5s;
+  animation-duration: 1.45s;
   animation-iteration-count: 1;
 }
 
 .toUp img {
   animation-name: toUp;
-  animation-duration: 1.5s;
+  animation-duration: 1.45s;
   animation-iteration-count: 1;
 }
 
 .toDown img {
   animation-name: toDown;
-  animation-duration: 1.5s;
+  animation-duration: 1.45s;
   animation-iteration-count: 1;
 }
 
