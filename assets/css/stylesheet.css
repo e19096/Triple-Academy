@@ -1,6 +1,28 @@
 @import url("http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,900");
 @import url("font-awesome.min.css");
 
+.play-button.display {
+  display: block;
+  border-radius: 10px;
+  width: auto;
+  margin: 0 auto 10px auto;
+  padding: 10px 60px 10px 60px;
+  background-color: green;
+  color: white;
+  font-size: 24px;
+  font-family: 'Baloo Da', sans-serif;
+}
+
+.play-button {
+  display: none;
+}
+
+.play-button:hover {
+  cursor: pointer;
+  background-color: #1cbd1c;
+  transition: 1s;
+}
+
 .icon {
   text-decoration: none;
 }
@@ -58,6 +80,10 @@ h1 {
   text-shadow: 1px 1px 5px black;
 }
 
+p.links {
+  margin-top: 20px;
+}
+
 .my-links {
   /*color: #40b540;*/
   color: #636363;
@@ -68,6 +94,7 @@ h1 {
   padding: 5px;
   font-weight: 800;
   font-size: 16px;
+  margin-top: 20px;
 }
 
 .my-links:hover {

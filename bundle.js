@@ -50,17 +50,24 @@
 	var Game = __webpack_require__(7);
 	
 	$(function () {
-	
 	  var $rootEl = $('.ta');
 	
-	  // $playButton = $("<button>").addClass("play-button").html("Start!");
-	  // $rootEl.append($playButton);
+	  $rootEl.append($("<button>").addClass("play-button display").html("Play!"));
+	  $(".play-button").on("click", function () {
+	    startGame($rootEl);
+	  });
+	});
+	
+	var startGame = function startGame($rootEl) {
+	  $(".container").remove();
+	  $(".play-button").removeClass("display");
+	  $rootEl.removeClass("game-over");
 	
 	  var game = new Game();
 	  var view = new View(game, $rootEl);
 	  view.setupBoard();
 	  view.bindEvents();
-	});
+	};
 
 /***/ },
 /* 1 */
@@ -121,7 +128,6 @@
 	    if (clear) {
 	      $(event.currentTarget).html("");
 	    }
-	
 	    $(".cell").removeClass("top-bounce bottom-bounce left-bounce right-bounce");
 	    $(".instructions").html("Hover over an object for instructions!");
 	  });
@@ -177,6 +183,7 @@
 	    this.unbindClick();
 	    this.$el.addClass("game-over");
 	    $(".container").append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
+	    $(".play-button").addClass("display").html("Play again!");
 	    console.log("it's over. seriously.");
 	  } else {
 	    if (this.game.bearsExist()) {
@@ -270,10 +277,10 @@
 	  $container.append($("<div>").addClass("instructions"));
 	  $(".instructions").html("Hover over an object for instructions!");
 	
-	  this.$el.append($("<div>").addClass("instructions-box"));
-	  for (var _i = 0; _i < 6; _i++) {
-	    $(".instructions-box").append($("<p>").html());
-	  }
+	  // this.$el.append($("<div>").addClass("instructions-box"));
+	  // for(let i = 0; i < 6; i++) {
+	  //   $(".instructions-box").append($("<p>").html("helloooooo"));
+	  // }
 	};
 	
 	module.exports = View;
