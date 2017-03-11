@@ -1,7 +1,7 @@
 #Triple Academy
 Inspired by TripleTown by SpryFox
 
-[Triple Academy live](https://www.estherpong.com/Triple-Academy/)
+[Triple Academy live](www.estherpong.com/Triple-Academy/)
 
 ![main game page with the play button](./docs/screenshots/main2.png)
 
