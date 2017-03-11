@@ -48,6 +48,7 @@
 	
 	var View = __webpack_require__(1);
 	var Game = __webpack_require__(7);
+	var InstructionConstants = __webpack_require__(3);
 	
 	$(function () {
 	  var $rootEl = $('.ta');
@@ -56,10 +57,13 @@
 	  $(".play-button").on("click", function () {
 	    startGame($rootEl);
 	  });
+	  $rootEl.append($("<img>").addClass("demo-gif").attr("src", "./assets/images/demo-small.gif"));
 	});
 	
 	var startGame = function startGame($rootEl) {
 	  $(".container").remove();
+	  $(".demo-gif").remove();
+	  $(".instructions-button").remove();
 	  $(".play-button").removeClass("display");
 	  $rootEl.removeClass("game-over");
 	
@@ -129,7 +133,7 @@
 	      $(event.currentTarget).html("");
 	    }
 	    $(".cell").removeClass("top-bounce bottom-bounce left-bounce right-bounce");
-	    $(".instructions").html("Hover over an object for instructions!");
+	    $(".instructions").empty().append($("<div>").html("Hover over an object for instructions!"));
 	  });
 	
 	  $(".cell").on("click", function (event) {
@@ -245,9 +249,40 @@
 	  }
 	};
 	
-	View.prototype.setupBoard = function () {
-	  var $container = $("<div>").addClass("container");
+	View.prototype.addInstructions = function () {
+	  var _this5 = this;
 	
+	  var showInstructions = function showInstructions() {
+	    _this5.$el.append($("<div>").addClass("instructions-modal display"));
+	    $(".instructions-modal").append($("<div>").addClass("outer-modal close-button"));
+	    $(".instructions-modal").append($("<div>").addClass("inner-modal"));
+	
+	    var instrStr = 'Place pieces next to each other to build bigger pieces.</br>Match 3 ' + ImgValueConstants[5] + '\'s to win!</br></br>';
+	    for (var piece in InstructionConstants) {
+	      instrStr += InstructionConstants[piece];
+	    }
+	    $(".inner-modal").html(instrStr);
+	
+	    $(".inner-modal").append($("<div>").addClass("close-button").html("&times"));
+	    $(".close-button").on("click", function () {
+	      hideInstructions();
+	    });
+	  };
+	
+	  var hideInstructions = function hideInstructions() {
+	    $(".instructions-modal").remove();
+	  };
+	
+	  this.$el.append($("<button>").addClass("instructions-button").html("Instructions"));
+	  $(".instructions-button").on("click", function () {
+	    showInstructions();
+	  });
+	};
+	
+	View.prototype.setupBoard = function () {
+	  this.addInstructions();
+	
+	  var $container = $("<div>").addClass("container");
 	  var grid = $("<ul>").addClass("grid").addClass("group");
 	
 	  for (var i = 0; i < 25; i++) {
@@ -275,12 +310,7 @@
 	  $('.hold').html("hold:<p>" + (this.game.holdPiece ? this.game.holdPiece.imgTag : "") + "</p>");
 	
 	  $container.append($("<div>").addClass("instructions"));
-	  $(".instructions").html("Hover over an object for instructions!");
-	
-	  // this.$el.append($("<div>").addClass("instructions-box"));
-	  // for(let i = 0; i < 6; i++) {
-	  //   $(".instructions-box").append($("<p>").html("helloooooo"));
-	  // }
+	  $(".instructions").append($("<div>").html("Hover over an object for instructions!"));
 	};
 	
 	module.exports = View;
@@ -339,10 +369,8 @@
 	  "tree": "<div>" + ImgValueConstants[3] + " + " + ImgValueConstants[3] + " + " + ImgValueConstants[3] + " = " + ImgValueConstants[4] + "</div>",
 	  "hut": "<div>" + ImgValueConstants[4] + " + " + ImgValueConstants[4] + " + " + ImgValueConstants[4] + " = " + ImgValueConstants[5] + "</div>",
 	  // "hut"   : `<div>${ImgValueConstants[4]} + ${ImgValueConstants[4]} + ${ImgValueConstants[4]} =   YOU WIN!!!</div>`,
-	  "house": "<div>" + ImgValueConstants[5] + " + " + ImgValueConstants[5] + " + " + ImgValueConstants[5] + " =  YOU WIN!!!</div>",
-	  "bear": "<div class=\"bear-instr\">Bears just walk around and get in your way!</div>"
-	  // mansion: `${ImgValueConstants[1]} + ${ImgValueConstants[1]} + ${ImgValueConstants[1]} = ${ImgValueConstants[1]}`,
-	  // castle: `${ImgValueConstants[1]} + ${ImgValueConstants[1]} + ${ImgValueConstants[1]} = ${ImgValueConstants[1]}`
+	  "house": "<div>" + ImgValueConstants[5] + " + " + ImgValueConstants[5] + " + " + ImgValueConstants[5] + " = YOU WIN!!!</div>",
+	  "bear": "<div>" + ImgValueConstants[0] + "'s just walk around...</div>"
 	};
 	
 	module.exports = InstructionConstants;
