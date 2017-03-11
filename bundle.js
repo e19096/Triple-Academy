@@ -458,6 +458,13 @@
 	var Piece = __webpack_require__(5);
 	var Bear = __webpack_require__(4);
 	
+	var DIRECTIONS = {
+	  'top': [-1, 0],
+	  'bottom': [1, 0],
+	  'left': [0, -1],
+	  'right': [0, 1]
+	};
+	
 	function Game() {
 	  this.board = new Board();
 	  this.pieces = [];
@@ -506,7 +513,6 @@
 	
 	      if (biggerPiece.value === 6) {
 	        //mansion to win
-	        console.log("YOU WIN!!!!!!!! YAAAAAYYYYYYY");
 	        this.won = true;
 	      }
 	
@@ -514,9 +520,7 @@
 	    }
 	  }
 	
-	  if (this.isOver()) {
-	    console.log("IT'S OVER. STOP PLAYING");
-	  } else {
+	  if (!this.isOver()) {
 	    this.currentPiece = this.giveCurrentPiece();
 	  }
 	};
@@ -536,38 +540,28 @@
 	
 	  var emptys = [];
 	
-	  var topPos = [row - 1, col];
-	  var bottomPos = [row + 1, col];
-	  var leftPos = [row, col - 1];
-	  var rightPos = [row, col + 1];
-	
-	  if (row > 0 && this.board.grid[topPos[0]][topPos[1]] === "") {
-	    emptys.push(topPos);
-	  }
-	  if (row < 4 && this.board.grid[bottomPos[0]][bottomPos[1]] === "") {
-	    emptys.push(bottomPos);
-	  }
-	  if (col % 5 > 0 && this.board.grid[leftPos[0]][leftPos[1]] === "") {
-	    emptys.push(leftPos);
-	  }
-	  if (col % 5 < 4 && this.board.grid[rightPos[0]][rightPos[1]] === "") {
-	    emptys.push(rightPos);
+	  for (var dir in DIRECTIONS) {
+	    var newPos = [row + DIRECTIONS[dir][0], col + DIRECTIONS[dir][1]];
+	    if (this.board.isValidGridPos(newPos) && this.board.grid[newPos[0]][newPos[1]] === "") {
+	      emptys.push(newPos);
+	    }
 	  }
 	
 	  return emptys;
 	};
 	
 	Game.prototype.walkBears = function (updateBears) {
-	  var that = this;
+	  var _this = this;
+	
 	  //iterate through bears
 	  this.bears.forEach(function (bear) {
-	    var empties = that.getAdjacentEmptys(bear.pos);
+	    var empties = _this.getAdjacentEmptys(bear.pos);
 	    if (empties.length > 0) {
-	      that.board.grid[bear.pos[0]][bear.pos[1]] = "";
-	      that.oldBears.push(bear.pos);
+	      _this.board.grid[bear.pos[0]][bear.pos[1]] = "";
+	      _this.oldBears.push(bear.pos);
 	      var newBearPos = bear.walk(empties);
-	      that.updateGrid(newBearPos, bear);
-	      that.newBears.push(newBearPos);
+	      _this.updateGrid(newBearPos, bear);
+	      _this.newBears.push(newBearPos);
 	    }
 	  });
 	
@@ -589,7 +583,7 @@
 	};
 	
 	Game.prototype.setAdjacentMatchingPositions = function (gridPos, pieceValue, reset) {
-	  var _this = this;
+	  var _this2 = this;
 	
 	  this.emptyAdjacentsObj(); //empty the arrays
 	
@@ -616,15 +610,8 @@
 	      directions = [directions];
 	    }
 	    directions.forEach(function (dir) {
-	      _this.adjacentsObj[dir].push(pos);
+	      _this2.adjacentsObj[dir].push(pos);
 	    });
-	  };
-	
-	  var DIRECTIONS = {
-	    'top': [-1, 0],
-	    'bottom': [1, 0],
-	    'left': [0, -1],
-	    'right': [0, 1]
 	  };
 	
 	  for (var dir in DIRECTIONS) {
@@ -642,13 +629,13 @@
 	};
 	
 	Game.prototype.combine = function (cellPos, adjacentPositions) {
-	  var _this2 = this;
+	  var _this3 = this;
 	
 	  var grid = this.board.grid;
 	  for (var direction in this.adjacentsObj) {
 	    this.adjacentsObj[direction].forEach(function (pos) {
 	      grid[pos[0]][pos[1]] = "";
-	      _this2.changed.push(pos);
+	      _this3.changed.push(pos);
 	    });
 	  }
 	

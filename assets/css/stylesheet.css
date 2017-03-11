@@ -158,8 +158,9 @@ p.links {
 }
 
 .ta img {
-  width: 58px;
-  height: 58px;
+  width: 65px;
+  height: 65px;
+  margin: -5px;
 }
 
 .ta {
