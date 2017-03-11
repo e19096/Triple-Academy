@@ -210,49 +210,49 @@ p.links {
   border-radius: 10px;
 }
 
-.ta .bottom-bounce img {
+.ta .bottom.bounce img {
   animation-name: bounceUp;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .top-bounce img {
+.ta .top.bounce img {
   animation-name: bounceDown;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .right-bounce img {
+.ta .right.bounce img {
   animation-name: bounceLeft;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .left-bounce img {
+.ta .left.bounce img {
   animation-name: bounceRight;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .bottom-bounce.left-bounce img {
+.ta .bottom.bounce.left.bounce img {
   animation-name: bounceUpRight;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .top-bounce.left-bounce img {
+.ta .top.bounce.left.bounce img {
   animation-name: bounceDownRight;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .bottom-bounce.right-bounce img {
+.ta .bottom.bounce.right.bounce img {
   animation-name: bounceUpLeft;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;
 }
 
-.ta .top-bounce.right-bounce img {
+.ta .top.bounce.right.bounce img {
   animation-name: bounceDownLeft;
   animation-duration: 0.6s;
   animation-iteration-count: infinite;

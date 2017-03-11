@@ -111,7 +111,7 @@
 	
 	        var _loop = function _loop(dir) {
 	          _this.game.adjacentsObj[dir].forEach(function (pos) {
-	            $('.cell[data-number=' + (pos[0] * 5 + pos[1]) + ']').addClass(dir + '-bounce');
+	            $('.cell[data-number=' + (pos[0] * 5 + pos[1]) + ']').addClass(dir + ' bounce');
 	          });
 	        };
 	
@@ -131,7 +131,7 @@
 	    if (clear) {
 	      $(event.currentTarget).html("");
 	    }
-	    $(".cell").removeClass("top-bounce bottom-bounce left-bounce right-bounce");
+	    $(".cell").removeClass("top bottom left right bounce");
 	    $(".instructions").empty().append($("<div>").html("Hover over an object for instructions!"));
 	  });
 	
@@ -141,7 +141,7 @@
 	    if (_this2.game.board.grid[cellPos[0]][cellPos[1]] === "") {
 	      _this2.makeMove($(event.currentTarget));
 	    }
-	    $(".cell").removeClass("bounce-down bounce-up bounce-right bounce-left zoom");
+	    $(".cell").removeClass("top bottom right left bounce zoom");
 	  });
 	
 	  $(".hold").on("click", function (event) {
@@ -183,7 +183,6 @@
 	  if (this.game.won) {
 	    this.unbind(["click", "hover"]);
 	    this.$el.addClass("game-won");
-	    console.log("you did it, really. good work.");
 	    $(".cell").html(ImgValueConstants[7]);
 	    $(".current-piece").html("<p>YAY!!!</p>");
 	  } else if (this.game.isOver()) {
@@ -192,7 +191,6 @@
 	    $(".container").append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
 	    $(".play-button").addClass("display").html("Play again!");
 	    $(".instructions-button").remove();
-	    console.log("it's over. seriously.");
 	  } else {
 	    if (this.game.bearsExist()) {
 	      this.game.walkBears(this.updateBears.bind(this));
