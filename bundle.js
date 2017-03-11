@@ -152,10 +152,14 @@
 	  });
 	};
 	
-	View.prototype.unbindClick = function () {
-	  $(".cell").off("click");
-	  $(".hold").off("click");
-	  $(".cell").off("mouseenter mouseleave");
+	View.prototype.unbind = function (actions) {
+	  if (actions.includes("click")) {
+	    $(".cell").off("click");
+	    $(".hold").off("click");
+	  }
+	  if (actions.includes("hover")) {
+	    $(".cell").off("mouseenter mouseleave");
+	  }
 	};
 	
 	View.prototype.makeMove = function ($cell) {
@@ -177,13 +181,13 @@
 	  $('.hold').html("hold:<p>" + (this.game.holdPiece ? this.game.holdPiece.imgTag : "") + "</p>");
 	
 	  if (this.game.won) {
-	    this.unbindClick();
+	    this.unbind(["click", "hover"]);
 	    this.$el.addClass("game-won");
 	    console.log("you did it, really. good work.");
 	    $(".cell").html(ImgValueConstants[7]);
 	    $(".current-piece").html("<p>YAY!!!</p>");
 	  } else if (this.game.isOver()) {
-	    this.unbindClick();
+	    this.unbind(["click", "hover"]);
 	    this.$el.addClass("game-over");
 	    $(".container").append($("<marquee>GAME OVER</marquee>").addClass("game-over-message"));
 	    $(".play-button").addClass("display").html("Play again!");
@@ -199,7 +203,7 @@
 	View.prototype.updateBears = function () {
 	  var _this4 = this;
 	
-	  this.unbindClick(); //don't allow clicks while bears are walking!
+	  this.unbind(["click"]); //don't allow clicks while bears are walking!
 	
 	  this.game.oldBears.forEach(function (changedPos, i) {
 	    var changedCellNo = changedPos[0] * 5 + changedPos[1];

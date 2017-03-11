@@ -406,7 +406,6 @@ p.links {
   position: absolute;
   height: 40px;
   width: 265px;
-  /*margin-top: 5px;*/
   margin-left: 20px;
   border-radius: 5px;
   text-align: center;
@@ -422,7 +421,6 @@ p.links {
   height: inherit;
   transition: 1s;
   font-size: 16px;
-  /*letter-spacing: 0.5px;*/
 }
 
 .instructions > div > img {
@@ -509,11 +507,3 @@ p.links {
   animation-duration: 1.45s;
   animation-iteration-count: 1;
 }
-
-
-
-
-
-
-
-  /**/
