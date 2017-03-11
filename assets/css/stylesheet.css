@@ -65,6 +65,7 @@
     .instructions-modal .inner-modal img {
       width: 36px;
       height: 36px;
+      margin: 0;
       margin-bottom: -12px;
     }
 
@@ -426,8 +427,8 @@ p.links {
 
 .instructions > div > img {
   display: inline-block;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   margin-bottom: -15px;
 }
 
