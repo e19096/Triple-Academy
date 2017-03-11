@@ -1,9 +1,9 @@
 #Triple Academy
 Inspired by TripleTown by SpryFox
 
-[Triple Academy live](https://e90216.github.io/Triple-Academy/)
+[Triple Academy live](https://www.estherpong.com/Triple-Academy/)
 
-![main game page with the play button](./docs/screenshots/main.png)
+![main game page with the play button](./docs/screenshots/main2.png)
 
 Triple Academy is a puzzle game in which the player matches objects in groups of three. Three or more adjacent objects of the same kind combine at the location of the last placed object of that group, into an object of the next tier, e.g. three bushes combine to form one tree. Objects must be in vertically or horizontally adjacent spots to combine (this can be in straight lines or in L shapes).
 
@@ -22,8 +22,49 @@ Triple Academy is a puzzle game in which the player matches objects in groups of
 ###Combining multiple tiers
 * Since the Game class is in charge of all of the pieces, it is also tasked with checking for adjacent matches.
 
-![screenshot of checkAdjacents code](./docs/screenshots/checkAdjacents.png)
-![screenshot of calling checkAdjacents in play code](./docs/screenshots/play.png)
+```javascript
+let isMatching = (pos) => {
+  if(board.isValidGridPos(pos)) {
+    return board.grid[pos[0]][pos[1]].value === pieceValue;
+  } else {
+    return false;
+  }
+};
+
+let storePos = (directions, pos) => {
+  if(!Array.isArray(directions)) { directions = [directions]; }
+  directions.forEach( (dir) => {
+    this.adjacentsObj[dir].push(pos);
+  });
+};
+
+for(let dir in DIRECTIONS) {
+  let pos = [currentRow + DIRECTIONS[dir][0], currentCol + DIRECTIONS[dir][1]];
+  if(isMatching(pos)) {
+    storePos(dir, pos);
+    for(let dir2 in DIRECTIONS) {
+      let pos2 = [pos[0] + DIRECTIONS[dir2][0], pos[1] + DIRECTIONS[dir2][1]];
+      if(!(pos2[0] === currentRow && pos2[1] === currentCol) && isMatching(pos2)) {
+        storePos([dir, dir2], pos2);
+      }
+    }
+  }
+}
+```
+
+```javascript
+this.setAdjacentMatchingPositions(clickedCellPos);
+while(this.multAdjacentsExist()) {
+  let biggerPiece = this.combine(clickedCellPos); //combine them
+  this.score += biggerPiece.value;
+
+  if(biggerPiece.value === 6) { //mansion to win
+    this.won = true;
+  }
+
+  this.setAdjacentMatchingPositions(clickedCellPos, biggerPiece.value); //check that that doesn't need to be combined
+}
+```
 
 * Okay, so once we've gotten the logic of finding matches down, all we have to do it combine them, right! Well, sure! But, if you have two bushes, waiting to become a tree, and two trees already built and ready to become a hut, AND two huts waiting to become a house, wouldn't you want that last bush to first become a tree, and then also combine with the other trees to become a hut, and then combine with the huts to become a house? Of course you would!
 
