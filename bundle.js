@@ -648,7 +648,7 @@
 	
 	Game.prototype.giveCurrentPiece = function () {
 	  //pick random piece (from: grass, bush, tree, hut, bear)
-	  var randomType = FrequencyConstants[Math.floor(Math.random() * (74 - 1) + 1)];
+	  var randomType = FrequencyConstants[Math.floor(Math.random() * 70 + 1)];
 	  var randomCellNo = Math.floor(Math.random() * 25);
 	
 	  if (randomType === "bear") {
@@ -664,7 +664,7 @@
 	  var numPieces = Math.floor(Math.random() * (8 - 5) + 5);
 	
 	  for (var i = 0; i < numPieces; i++) {
-	    var randomType = FrequencyConstants[Math.floor(Math.random() * (52 - 1) + 1)];
+	    var randomType = FrequencyConstants[Math.floor(Math.random() * 65 + 1)];
 	
 	    var randomCellNo = Math.floor(Math.random() * 25);
 	    var pos = [Math.floor(randomCellNo / 5), randomCellNo % 5];
@@ -712,96 +712,33 @@
 	
 	//for initial setup (piece randomization)
 	
-	var FrequencyConstants = {
-	  1: "grass",
-	  2: "grass",
-	  3: "grass",
-	  4: "grass",
-	  5: "grass",
+	var FrequencyConstants = {};
 	
-	  6: "grass",
-	  7: "grass",
-	  8: "grass",
-	  9: "grass",
-	  10: "grass",
+	for (var i = 1; i <= 45; i++) {
+	  FrequencyConstants[i] = "grass";
+	}
 	
-	  11: "grass",
-	  12: "grass",
-	  13: "grass",
-	  14: "grass",
-	  15: "grass",
+	for (var _i = 46; _i <= 60; _i++) {
+	  FrequencyConstants[_i] = "bush";
+	}
 	
-	  16: "grass",
-	  17: "grass",
-	  18: "grass",
-	  19: "grass",
-	  20: "grass",
+	for (var _i2 = 61; _i2 <= 65; _i2++) {
+	  FrequencyConstants[_i2] = "tree";
+	}
 	
-	  21: "grass",
-	  22: "grass",
-	  23: "grass",
-	  24: "grass",
-	  25: "grass",
+	for (var _i3 = 66; _i3 <= 67; _i3++) {
+	  FrequencyConstants[_i3] = "hut";
+	}
 	
-	  26: "grass",
-	  27: "grass",
-	  28: "grass",
-	  29: "grass",
-	  30: "grass",
+	for (var _i4 = 68; _i4 <= 70; _i4++) {
+	  FrequencyConstants[_i4] = "bear";
+	}
 	
-	  31: "grass",
-	  32: "grass",
-	  33: "bush",
-	  34: "bush",
-	  35: "bush",
-	
-	  36: "bush",
-	  37: "bush",
-	  38: "bush",
-	  39: "bush",
-	  40: "bush",
-	
-	  41: "bush",
-	  42: "bush",
-	  43: "bush",
-	  44: "bush",
-	  45: "bush",
-	
-	  46: "bush",
-	  47: "bush",
-	  48: "tree",
-	  49: "tree",
-	  50: "tree",
-	
-	  51: "hut",
-	  // ^ for initial setup
-	
-	  52: "grass",
-	  53: "grass",
-	  54: "grass",
-	  55: "grass",
-	
-	  56: "grass",
-	  57: "grass",
-	  58: "grass",
-	  59: "grass",
-	  60: "grass",
-	
-	  61: "bush",
-	  62: "bush",
-	  63: "bush",
-	  64: "tree",
-	  65: "tree",
-	
-	  66: "tree",
-	  67: "hut",
-	  68: "bear",
-	  69: "bear",
-	  70: "bear",
-	
-	  71: "bear",
-	  72: "bear",
-	  73: "bear"
+	var increaseFrequency = function increaseFrequency(piece, num) {
+	  var length = Object.keys(FrequencyConstants).length;
+	  for (var _i5 = 1; _i5 <= num; _i5++) {
+	    FrequencyConstants[length + _i5] = piece;
+	  }
 	};
 	
 	module.exports = FrequencyConstants;
